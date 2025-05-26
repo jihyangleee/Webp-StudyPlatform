@@ -1,0 +1,69 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>카카오 로그인</title>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+</head>
+<body>
+  <h1>카카오 로그인 테스트</h1>
+  <button id="loginBtn" onclick="loginWithKakao()">카카오로 로그인</button>
+  <button id="logoutBtn" onclick="logout()" style="display: none;">로그아웃</button>
+
+  <p id="welcomeMsg"></p>
+
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script>
+    Kakao.init('bcd4e7a262e8b36b6931d781701f1abb');
+
+    function loginWithKakao() {
+      Kakao.Auth.login({
+        success: function(authObj) {
+          fetch('/auth/kakao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: authObj.access_token })
+          })
+          .then(res => res.json())
+          .then(data => {
+            // JWT 저장
+            localStorage.setItem('jwt', data.token);
+            localStorage.setItem('username', data.username);
+
+            showWelcome();
+          });
+        },
+        fail: function(err) {
+          alert(JSON.stringify(err));
+        }
+      });
+    }
+
+    // 로그아웃 기능
+    function logout() {
+      localStorage.removeItem('jwt');
+      localStorage.removeItem('username');
+      showWelcome();
+    }
+
+    // 자동 로그인 확인 및 UI 업데이트
+    function showWelcome() {
+      const username = localStorage.getItem('username');
+      if (username) {
+        document.getElementById('welcomeMsg').innerText = `환영합니다, ${username}님`;
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+      } else {
+        document.getElementById('welcomeMsg').innerText = '';
+        document.getElementById('loginBtn').style.display = 'inline-block';
+        document.getElementById('logoutBtn').style.display = 'none';
+      }
+    }
+
+    // 페이지 로딩 시 자동 로그인 확인
+    window.onload = showWelcome;
+  </script>
+</body>
+
+</html>
