@@ -7,6 +7,13 @@ const PORT = 8000;
 
 const JWT_SECRET = 'your_jwt_secret'; // 진짜 프로젝트에서는 .env로 따로 관리!
 
+// webP 실행
+const path = require('path');
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'webP.html'));
+});
+
 app.use(express.json());
 app.use(express.static(__dirname));
 
