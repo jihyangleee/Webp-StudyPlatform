@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const createError = require('http-errors');
 
-const authRouter = require('./routes/auth');
+const authRouter = require('./routes/authR');
 const usersRouter = require('./routes/users'); // 필요한 경우
 const indexRouter = require('./routes/index');
 const app = express();
