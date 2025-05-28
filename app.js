@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
 // 라우터 연결
 app.use('/', authRouter);
 app.use('/users', usersRouter); // 필요 시
