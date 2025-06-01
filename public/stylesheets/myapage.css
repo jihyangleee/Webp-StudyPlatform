@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.favicon {
+    width: 40px;
+    height: 40px;
+}
+
+.nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.mypage-container {
+    max-width: 600px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.profile-box,
+.study-box {
+    background-color: #e3e3e3;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.profile-label,
+.study-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.profile-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-img {
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+.profile-text p {
+    margin: 0;
+}
+
+.study-list {
+    list-style: none;
+    padding: 0;
+}
+
+.study-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-link {
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 13px;
+    border: 1px solid #aaa;
+    transition: background-color 0.2s;
+}
+
+.detail-link:hover {
+    background-color: #f0f0f0;
+}
+
+.new-study-btn {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    background-color: white;
+    border: 1px solid #aaa;
+    padding: 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.new-study-btn:hover {
+    background-color: #f0f0f0;
+}
