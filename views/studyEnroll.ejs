@@ -11,7 +11,7 @@
 <body>
   <h1>스터디/프로젝트 모집 글 작성</h1>
 
-  <form id="studyForm" enctype="multipart/form-data" method="POST" action="/studies">
+  <form id="studyForm" method="POST"  action="<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>">
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
@@ -49,15 +49,20 @@
 
     <button type="submit" id = "enroll">등록하기</button>
   </form>
-  <script>
-    document.getElementById('enroll').addEventListener('click', () => {
-      window.location.href = '/studyR/studies';  // 스터디 등록 페이지 라우트 URL
-    });
-  </script>
+  
   <!-- 카카오 지도 API (자신의 JS 키로 변경) -->
   <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%= process.env.KAKAO_JAVASCRIPT_KEY %>"></script>
 
   <!-- 번들된 JS 파일 로드 (webpack/vite 빌드 결과) -->
   <script type="module" src="/dist/assets/main-Dg6OCUqS.js"></script>
+
+  <script>
+  // 폼 제출 전에 editor 내용 → 숨겨진 input에 복사
+  document.getElementById('studyForm').addEventListener('submit', function (e) {
+    const editorContent = document.getElementById('editor').innerText;
+    document.getElementById('description').value = editorContent;
+  });
+</script>
+
 </body>
 </html>
