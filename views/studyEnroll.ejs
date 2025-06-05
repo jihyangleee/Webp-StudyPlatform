@@ -2,16 +2,35 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>스터디/프로젝트 모집 글 작성</title>
+  
+  <title>SPARK - 등록하기</title>
   <link rel="stylesheet" href="/dist/assets/main-DUs1nuyG.css" />
-  <style>
-    #map { width: 100%; height: 300px; margin-bottom: 20px; }
-  </style>
+  <link rel="stylesheet" href="/stylesheets/studyEnroll.css">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  
+    <style>
+  #map {
+    width: 100%;
+    height: 400px; /* 높이를 명시적으로 지정 */
+  }
+</style>
+
+    
 </head>
 <body>
-  <h1>스터디/프로젝트 모집 글 작성</h1>
-
-  <form id="studyForm" enctype="multipart/form-data" method="POST" action="/studies">
+  <header class="header">
+    <div class="logo">
+      <a href="/webP.html">
+        <img src="/favicon.png" alt="로고" class="favicon">
+      </a>
+      <h1>ENROLL</h1>
+    </div>
+    <nav class="nav">
+      <a href="/webP.html">MAIN</a>
+      <a href="/login.ejs">LOGOUT</a>
+    </nav>
+  </header>
+  <form id="studyForm" method="POST"  action="<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>">
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
@@ -41,23 +60,55 @@
 
     <label>팀 소개 이미지 / 포스터 (파일 업로드):</label><br />
     <input type="file" name="thumbnail" accept="image/*" /><br /><br />
+  
 
     <label>스터디 장소 위치 등록 (지도 클릭):</label><br />
-    <div id="map"></div>
-    <input type="hidden" name="location_lat" id="location_lat" value="<%= study?.location_lat || '' %>" />
-    <input type="hidden" name="location_lng" id="location_lng" value="<%= study?.location_lng || '' %>" />
+    <input type="text" id="keyword" placeholder="예: 서울역" />
+  <button type="button" onclick="searchLocation()">검색</button>
 
-    <button type="submit" id = "enroll">등록하기</button>
-  </form>
-  <script>
-    document.getElementById('enroll').addEventListener('click', () => {
-      window.location.href = '/studyR/studies';  // 스터디 등록 페이지 라우트 URL
+  <!-- 위도/경도 표시 및 숨겨진 필드 -->
+  <p>위도: <span id="lat"></span> / 경도: <span id="lng"></span></p>
+  <input type="hidden" name="location_lat" id="location_lat">
+  <input type="hidden" name="location_lng" id="location_lng">
+
+  <div id="map" style="width:100%; height:300px;"></div>
+<button type="submit" id="enroll">등록하기</button>
+</form>
+  <!-- Kakao Maps API 로드 -->
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>"></script>
+    <script>
+  const map = new kakao.maps.Map(document.getElementById('map'), {
+    center: new kakao.maps.LatLng(37.5665, 126.9780),
+    level: 3
+  });
+  const places = new kakao.maps.services.Places();
+  let marker = new kakao.maps.Marker();
+
+  function searchLocation() {
+    const keyword = document.getElementById('keyword').value.trim();
+    if (!keyword) return alert("검색어를 입력하세요");
+
+    places.keywordSearch(keyword, function(result, status) {
+      console.log(result, status);
+      if (status === kakao.maps.services.Status.OK && result.length > 0) {
+        const lat = result[0].y;
+        const lng = result[0].x;
+
+        const coords = new kakao.maps.LatLng(lat, lng);
+        marker.setMap(null);
+        marker = new kakao.maps.Marker({ map, position: coords });
+        map.setCenter(coords);
+
+        document.getElementById('lat').innerText = lat;
+        document.getElementById('lng').innerText = lng;
+      } else {
+        alert("검색 결과가 없습니다.");
+      }
     });
-  </script>
-  <!-- 카카오 지도 API (자신의 JS 키로 변경) -->
-  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%= process.env.KAKAO_JAVASCRIPT_KEY %>"></script>
+  }
+</script>
 
-  <!-- 번들된 JS 파일 로드 (webpack/vite 빌드 결과) -->
   <script type="module" src="/dist/assets/main-Dg6OCUqS.js"></script>
+
 </body>
 </html>
