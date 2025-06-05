@@ -98,6 +98,53 @@ body {
     background-color: #f0f0f0;
 }
 
+.study-item {
+    position: relative;
+    padding: 10px 0;
+}
+
+.button-group {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    gap: 8px;
+}
+/* 공통 버튼 스타일 */
+.study-button {
+    padding: 6px 12px;
+    margin: 4px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* 삭제 버튼 */
+.delete-button {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: 1px solid #aaa;
+}
+
+.delete-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* 수정 버튼 */
+.edit-button {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: 1px solid #aaa;
+}
+
+.edit-button:hover {
+    background-color: #f0f0f0;
+}
+
+
 .new-study-btn {
     display: block;
     margin-top: 20px;

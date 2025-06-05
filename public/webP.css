@@ -115,6 +115,7 @@ h1 {
 .project-card {
     flex: 1;
     height: 150px;
+    aspect-ratio: 1/1;
     background-color: #ccc;
     border-radius: 20px;
 }

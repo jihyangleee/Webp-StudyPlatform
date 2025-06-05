@@ -1,14 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // 메인페이지용 로직만 넣기 (예: 마이페이지 버튼 처리)
+    const mypageBtn = document.querySelector('.mypage');
+    if (mypageBtn) {
+        mypageBtn.addEventListener('click', function () {
+            window.location.href = '/studyR/mypage';
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     const wrapper = document.querySelector('.carousel-wrapper');
     const carousel = document.querySelector('.carousel-images');
     const slides = document.querySelectorAll('.carousel-images img');
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
 
-    let index = 0;
-    let timer;
 
-    function updateCarousel() {
+let index = 0;
+let timer;
+
+function updateCarousel() {
         const slideWidth = wrapper.clientWidth;
         carousel.style.transform = `translateX(-${index * slideWidth}px)`;
     }
