@@ -13,7 +13,7 @@
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
-      <a href="/webP.html">MAIN</a>
+      <a href="/studyR/webP">MAIN</a>
       <a href="/login">LOGOUT</a>
     </nav>
   </header>
@@ -31,13 +31,23 @@
 
     <section class="study-box">
       <p class="study-label">MY STUDY</p>
-      <ul class="study-list">
+      <div class="filter-buttons">
+      
+          
+      <a href="/studyR/mypage?filter=soon">마감 임박</a>
+      <a href="/studyR/mypage?filter=approved">합격</a>
+      <a href="/studyR/mypage?filter=pending">승인 대기</a>
+    </div>
+    </div>
+      <ul class="study-list"> <!--이 부분이 study의 데이터에 있는 내용을 가져오는 것이다. 그래서 거기에 미리두면 될듯! 여러 스터디들을 -->
         <% studies.forEach(study=> { %>
           <li class="study-item">
             <strong>
               <%= study.title %>
             </strong><br>
             <div class="button-group">
+              <!-- <form action="/studyR/studies/upload/<%= study.id %>" method="GET" style="display:inline;">
+                <button type="submit" class="study-button delete-button">업로드</button> --> <!--업로드버튼을 마이페이지에서 만들지 아니면 등록페이지에서 만들지 고민..-->
               <form action="/studyR/studies/delete/<%= study.id %>" method="POST" style="display:inline;">
                 <button type="submit" class="study-button delete-button">삭제</button>
               </form>

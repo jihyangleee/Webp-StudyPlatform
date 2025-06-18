@@ -20,17 +20,17 @@
 <body>
   <header class="header">
     <div class="logo">
-      <a href="/webP.html">
+      <a href="studyR/webP">
         <img src="/favicon.png" alt="로고" class="favicon">
       </a>
       <h1>ENROLL</h1>
     </div>
     <nav class="nav">
-      <a href="/webP.html">MAIN</a>
-      <a href="/login.ejs">LOGOUT</a>
+      <a href="/studyR/webP">MAIN</a>
+      <a href="/studyR/login">LOGOUT</a>
     </nav>
   </header>
-  <form id="studyForm" method="POST"  action="<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>">
+  <form id="studyForm" method="POST" action = "<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>" >
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
@@ -72,8 +72,10 @@
   <input type="hidden" name="location_lng" id="location_lng">
 
   <div id="map" style="width:100%; height:300px;"></div>
-<button type="submit" id="enroll">등록하기</button>
+<button type="submit" name="action" value="enroll" id="enroll">등록하기</button>
+<button type="submit" name="action" value="upload" id= "upload" >메인업로드</button>
 </form>
+
   <!-- Kakao Maps API 로드 -->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>"></script>
     <script>
