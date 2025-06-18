@@ -54,6 +54,6 @@ router.post('/kakao', async (req, res) => {
     console.error('카카오 API 오류:', err.message);
     res.status(400).json({ message: '카카오 인증 실패' });
   }
-});
+}); //access token을 서버에 보내면 이를 통해 jwt 발급 이것을 쿠키나 로컬 스토리지에 저장
 
 module.exports = router;
