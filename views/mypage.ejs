@@ -13,7 +13,7 @@
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
-      <a href="/webP.html">MAIN</a>
+      <a href="/main">MAIN</a>
       <a href="/login">LOGOUT</a>
     </nav>
   </header>
@@ -44,15 +44,35 @@
               <form action="/studyR/studies/edit/<%= study.id %>" method="GET" style="display:inline;">
                 <button type="submit" class="study-button edit-button">수정</button>
               </form>
+
+              <form action="/studyR/studies/applicants/<%= study.id %>" method="GET" style="display:inline;">
+                <button type="submit" class="study-button">지원자 보기</button>
+              </form>
             </div>
           </li>
-          <% }) %>
+          <% }) %>        
       </ul>
 
       <!-- 스터디 등록 -->
       <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
     </section>
-
+    <!-- 🙋 내가 지원한 스터디 목록 -->
+     <section class="applied-box">
+      <p class="study-label">지원한 스터디 결과</p>
+      <% if (myApplications.length === 0) { %>
+        <p>아직 지원한 스터디가 없습니다.</p>
+        <% } else { %>
+          <ul class="applied-list">
+            <% myApplications.forEach(app => { %>
+              <li>
+                <strong><%= app.title %></strong>
+                (마감일: <%= app.deadline %>) -
+                결과: <%= app.status %>
+              </li>
+              <% }) %>
+            </ul>
+            <% } %>
+          </section>
   </main>
 
   <script>

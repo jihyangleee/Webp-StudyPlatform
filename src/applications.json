@@ -1,0 +1,46 @@
+{
+  "1750263014564": [
+    {
+      "id": "4276029693",
+      "studyId": "1750263014564",
+      "name": "김똑똑",
+      "age": "32",
+      "email": "ddok@naver.com",
+      "intro": "저는 똑똑합니다.",
+      "stack": "비상한 머리",
+      "reason": "성장하고 싶어용",
+      "github": "",
+      "submittedAt": "2025-06-18T16:46:16.335Z",
+      "status": "accepted"
+    }
+  ],
+  "1750263019999": [
+    {
+      "id": "4276029693",
+      "studyId": "1750263019999",
+      "name": "김바보",
+      "age": "3",
+      "email": "babo@naver.com",
+      "intro": "안녕",
+      "stack": "한글",
+      "reason": "똑똑해지기",
+      "github": "https://www.naver.com/",
+      "submittedAt": "2025-06-18T17:42:30.976Z"
+    }
+  ],
+  "1750263796686": [
+    {
+      "id": "4309658211",
+      "studyId": "1750263796686",
+      "name": "홍길동",
+      "age": "25",
+      "email": "hong@example.com",
+      "intro": "성실하고 열정적인 개발자입니다.",
+      "stack": "JavaScript, React",
+      "reason": "실무 경험을 쌓고 싶어서 지원합니다.",
+      "github": "https://github.com/honggildong",
+      "submittedAt": "2025-06-19T02:00:00.000Z",
+      "status": "rejected"
+    }
+  ]
+}

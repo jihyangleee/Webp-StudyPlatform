@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/webP.css">
+    <title>SPARK - 우리의 스터디 파크</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Grandiflora+One&family=Gravitas+One&family=Nanum+Myeongjo&family=Song+Myung&display=swap"
+        rel="stylesheet">
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/main">
+                <img src="/favicon.png" alt="파비콘" class="favicon">
+            </a>
+            <div>
+                <h1>SPARK</h1>
+                <p>우리의 스터디 파크</p>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="/studyR/mypage">MYPAGE</a>
+            <a href="/login">LOGOUT</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="carousel-section">
+            <div class="carousel-wrapper">
+                <button class="prev-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="carousel-images">
+                    <img src="/Frame 1.png" />
+                    <img src="/Frame 2.png" />
+                    <img src="/Frame 3.png" />
+                </div>
+                <button class="next-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="carousel-text">
+                <h3>SPARK에서<br>새로운 팀원을 찾으세요!</h3>
+                <p>관심 있는 프로젝트에 참여하거나<br>자신의 아이디어를 등록해보세요.</p>
+            </div>
+        </section>
+        <section class="projects">
+            <h2>모집 중인 스터디 및 프로젝트</h2>
+            <button class="filter-btn">필터 설정</button>
+            <div class="project-list">
+                <% studies.forEach(study => { %>
+                    <div class="project-card">
+                        <h3><%= study.title %></h3>
+                        <p>기술 스택: 
+                            <% study.stackList.forEach((stack, index) => { %>
+                                <span><%= stack %><%= index < study.stackList.length - 1 ? ', ' : '' %></span>
+                                <% }); %>
+                        </p>
+                        <p>마감일: <%= study.deadline %></p>
+                        
+                        <% if (study.userId !== currentUserId) { %>
+                            <% if (study.applied) { %>
+                                <button disabled>지원 완료</button>
+                                <% } else { %>
+                                    <form action="/apply/<%= study.id %>" method="get">
+                                        <button type="submit">지원하기</button>
+                                    </form>
+                                    <form action="/studyR/studies/detail/<%= study.id %>" method="get" style="display:inline;">
+                                        <button type="submit">자세히 보기</button>
+                                    </form>
+                                    <% } %>
+                                    <% } %>
+                                </div>
+                                <% }); %>
+                    </div>
+
+        </section>
+    </main>
+
+    <script src="/webP.js"></script>
+</body>
+
+</html>

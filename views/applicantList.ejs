@@ -1,0 +1,40 @@
+<h2><%= study.title %> - 지원자 목록</h2>
+
+<% if (applicants.length === 0) { %>
+  <p>아직 지원자가 없습니다.</p>
+<% } else { %>
+  <ul>
+    <% applicants.forEach(app => { %>
+      <li>
+        <strong>이름:</strong> <%= app.name %> |
+        <strong>나이:</strong> <%= app.age %> |
+        <strong>이메일:</strong> <%= app.email %><br>
+        <strong>자기소개:</strong> <%= app.intro %><br>
+        <strong>기술 스택:</strong> <%= app.stack %><br>
+        <strong>지원 동기:</strong> <%= app.reason %><br>
+        <strong>GitHub:</strong> <a href="<%= app.github %>" target="_blank"><%= app.github %></a>
+        <!--  상태 출력 -->
+        <strong>결과:</strong>
+        <% if (app.status === 'accepted') { %>
+            합격
+        <% } else if (app.status === 'rejected') { %>
+            불합격
+        <% } else { %>
+            대기 중
+        <% } %>
+        <br>
+        <!--  합격/불합격 버튼 -->
+
+        <form action="/studyR/studies/applicants/<%= study.id %>/<%= app.id %>/accept" method="POST" style="display:inline;">
+            <button type="submit">합격</button>
+        </form>
+        <form action="/studyR/studies/applicants/<%= study.id %>/<%= app.id %>/reject" method="POST" style="display:inline;">
+            <button type="submit">불합격</button>
+        </form>
+        <hr>
+      </li>
+    <% }); %>
+  </ul>
+<% } %>
+
+<a href="/studyR/mypage">← 마이페이지로 돌아가기</a>

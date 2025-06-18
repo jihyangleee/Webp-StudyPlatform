@@ -1,0 +1,12 @@
+<h2><%= study.title %> 신청서</h2>
+
+<form action="/apply/<%= study.id %>" method="post">
+  <label>이름: <input type="text" name="name" required></label><br>
+  <label>나이: <input type="number" name="age" required></label><br>
+  <label>이메일: <input type="email" name="email" required></label><br>
+  <label>자기소개: <textarea name="intro" required></textarea></label><br>
+  <label>기술 스택: <input type="text" name="stack"></label><br>
+  <label>지원 동기: <textarea name="reason"></textarea></label><br>
+  <label>GitHub 링크: <input type="url" name="github"></label><br>
+  <button type="submit">제출하기</button>
+</form>

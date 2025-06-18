@@ -48,6 +48,11 @@ router.post('/kakao', async (req, res) => {
     // JWT 생성
     const token = jwt.sign({ kakaoId, nickname }, JWT_SECRET, { expiresIn: '1h' });
 
+    res.cookie('currentUserId', kakaoId, {
+      httpOnly: true,   // JS 접근 방지 (보안 강화)
+      maxAge: 3600000   // 1시간
+    });
+
     res.json({ username: nickname, token });
 
   } catch (err) {

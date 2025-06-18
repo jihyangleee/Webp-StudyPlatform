@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "id": "1750263796686",
+    "userId": "4276029693",
+    "title": "심심",
+    "description": "나는야 심심해",
+    "techstack": "[{\"value\":\"한가함\"}]",
+    "team_size": "3",
+    "progress_method": "온라인",
+    "deadline": "2025-06-24",
+    "requirements": "심심이들만 모이기",
+    "thumbnail": "",
+    "location_lat": "",
+    "location_lng": ""
+  },
+  {
+    "id": "1750263014564",
+    "userId": "9999999999",
+    "title": "다른 사람의 스터디",
+    "description": "수동으로 넣은 글",
+    "techstack": "[{\"value\":\"협업\"}]",
+    "team_size": "4",
+    "progress_method": "온라인",
+    "deadline": "2025-06-30",
+    "requirements": "성실한 분!",
+    "thumbnail": "",
+    "location_lat": "",
+    "location_lng": ""
+  },
+  {
+    "id": "1750263019999",
+    "userId": "8888888888",
+    "title": "프론트엔드 스터디 모집",
+    "description": "리액트, 자바스크립트 위주로 함께 성장할 분을 찾습니다.",
+    "techstack": "[{\"value\":\"React\"}, {\"value\":\"JavaScript\"}]",
+    "team_size": "5",
+    "progress_method": "오프라인",
+    "deadline": "2025-07-15",
+    "requirements": "기본적인 JS 문법 이해와 협업에 열린 자세",
+    "thumbnail": "",
+    "location_lat": "37.5665",
+    "location_lng": "126.9780"
+  }
+]

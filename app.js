@@ -8,6 +8,8 @@ const createError = require('http-errors');
 const authRouter = require('./routes/authR');
 const usersRouter = require('./routes/users'); // 필요한 경우
 const studyRouter = require('./routes/studyR');
+const mainRouter = require('./routes/mainR');
+const applyRouter = require('./routes/applyR');
 const app = express();
 
 // 뷰 엔진 설정
@@ -24,10 +26,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use(cookieParser());
 // 라우터 연결
 app.use('/', authRouter);
 app.use('/users', usersRouter); // 필요 시
 app.use('/studyR',studyRouter);
+app.use('/', mainRouter);
+app.use('/', applyRouter);
 // 404 처리
 app.use((req, res, next) => {
   next(createError(404));
