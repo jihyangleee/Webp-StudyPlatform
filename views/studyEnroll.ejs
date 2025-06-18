@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   
-	<title>Kakao 지도 시작하기</title>
-  <title>스터디/프로젝트 모집 글 작성</title>
+  <title>SPARK - 등록하기</title>
   <link rel="stylesheet" href="/dist/assets/main-DUs1nuyG.css" />
+  <link rel="stylesheet" href="/stylesheets/studyEnroll.css">
+  <link rel="icon" href="/favicon.png" type="image/png">
   
     <style>
   #map {
@@ -17,8 +18,18 @@
     
 </head>
 <body>
-  <h1>스터디/프로젝트 모집 글 작성</h1>
-
+  <header class="header">
+    <div class="logo">
+      <a href="/webP.html">
+        <img src="/favicon.png" alt="로고" class="favicon">
+      </a>
+      <h1>ENROLL</h1>
+    </div>
+    <nav class="nav">
+      <a href="/webP.html">MAIN</a>
+      <a href="/login.ejs">LOGOUT</a>
+    </nav>
+  </header>
   <form id="studyForm" method="POST"  action="<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>">
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />

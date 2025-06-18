@@ -1,88 +1,98 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!-- main  -->
-  <meta charset="UTF-8"/>
-    <meta charset="UTF-8" />
-  <title>카카오 로그인</title>
+  <meta charset="UTF-8" />
+  <title>SPARK - 로그인</title>
   <link rel="stylesheet" href="/stylesheets/login.css" />
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <link rel="icon" href="/favicon.png" type="image/png">
 </head>
+
 <body>
   <div class="login-wrapper">
-    <h1>팀원 매칭 플랫폼에 오신 것을 환영합니다!</h1>
+    <div style="display: flex; justify-content: space-between;">
+      <span>S</span>
+      <span>P</span>
+      <span>A</span>
+      <span>R</span>
+      <span>K</span>
+      <span>!</span>
+    </div>
+    <h1>SPARK - 우리의 스터디 파크에 오신 것을 환영합니다!</h1>
     <p>여정을 함께 할 인연을 만들어 보세요</p>
-        <div class="button-wrapper">
-            <!-- <button class="mainPage">메인페이지</button>
+    <div class="button-wrapper">
+      <!-- <button class="mainPage">메인페이지</button>
             <button class="mypage">마이페이지</button> -->
-            <button id="loginBtn" class ="kakao-btn" onclick="loginWithKakao()">로그인</button>
-            <button id="logoutBtn" onclick="logout()" style="display: none;">로그아웃</button>
-        </div>
+      <button id="loginBtn" class="kakao-btn" onclick="loginWithKakao()">로그인</button>
+      <button id="logoutBtn" class="kakao-btn" onclick="logout()" style="display: none;">로그아웃</button>
+    </div>
     </header>
 
-  <p id="welcomeMsg"></p>
+    <p id="welcomeMsg"></p>
 
-  <script>
-    
-    Kakao.init('<%=kakaoKey%>');  // 서버에서 전달받은 카카오 키 삽입
-    let isLoggingIn = false;
+    <script>
 
-    function loginWithKakao() {
-  if (isLoggingIn) return;
+      Kakao.init('<%=kakaoKey%>');  // 서버에서 전달받은 카카오 키 삽입
+      let isLoggingIn = false;
 
-  isLoggingIn = true;
-  Kakao.Auth.login({
-    success: function(authObj) {
-      fetch('/kakao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: authObj.access_token })
-      })
-      .then(res => res.json())
-      .then(data => {
-        localStorage.setItem('jwt', data.token);
-        localStorage.setItem('username', data.username);
-        showWelcome();
+      function loginWithKakao() {
+        if (isLoggingIn) return;
 
-        // 로그인 후 페이지 이동
-        window.location.href = '/webP.html';
-      })
-      .finally(() => {
-        isLoggingIn = false;
-      });
-    },
-    fail: function(err) {
-      alert(JSON.stringify(err));
-      isLoggingIn = false;
-    }
-  });
-}
+        isLoggingIn = true;
+        Kakao.Auth.login({
+          success: function (authObj) {
+            fetch('/kakao', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: authObj.access_token })
+            })
+              .then(res => res.json())
+              .then(data => {
+                localStorage.setItem('jwt', data.token);
+                localStorage.setItem('username', data.username);
+                showWelcome();
 
-    function logout() {
-      localStorage.removeItem('jwt');
-      localStorage.removeItem('username');
-      showWelcome();
-    }
-
-    function showWelcome() {
-      const username = localStorage.getItem('username');
-      if (username) {
-        document.getElementById('welcomeMsg').innerText = `환영합니다, ${username}님`;
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'inline-block';
-      } else {
-        document.getElementById('welcomeMsg').innerText = '';
-        document.getElementById('loginBtn').style.display = 'inline-block';
-        document.getElementById('logoutBtn').style.display = 'none';
+                // 로그인 후 페이지 이동
+                window.location.href = '/webP.html';
+              })
+              .finally(() => {
+                isLoggingIn = false;
+              });
+          },
+          fail: function (err) {
+            alert(JSON.stringify(err));
+            isLoggingIn = false;
+          }
+        });
       }
-    }
-   
+
+      function logout() {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('username');
+        showWelcome();
+      }
+
+      function showWelcome() {
+        const username = localStorage.getItem('username');
+        if (username) {
+          document.getElementById('welcomeMsg').innerText = `환영합니다, ${username}님`;
+          document.getElementById('loginBtn').style.display = 'none';
+          document.getElementById('logoutBtn').style.display = 'inline-block';
+        } else {
+          document.getElementById('welcomeMsg').innerText = '';
+          document.getElementById('loginBtn').style.display = 'inline-block';
+          document.getElementById('logoutBtn').style.display = 'none';
+        }
+      }
+
       // document.querySelector('.mypage').addEventListener('click', () => {
       //   window.location.href = 'studyR/mypage'; // 마이페이지 URL로 변경
       // });
 
-    window.onload = showWelcome;
-  </script>
+      window.onload = showWelcome;
+    </script>
 </body>
+
 </html>

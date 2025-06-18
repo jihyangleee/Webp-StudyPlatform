@@ -13,8 +13,8 @@
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
-      <a href="/main">MAIN</a>
-      <a href="/login">LOGIN</a>
+      <a href="/webP.html">MAIN</a>
+      <a href="/login">LOGOUT</a>
     </nav>
   </header>
   <main class="mypage-container">
@@ -32,31 +32,30 @@
     <section class="study-box">
       <p class="study-label">MY STUDY</p>
       <ul class="study-list">
-        <li>스터디 1 <a href="/study/1" class="detail-link">자세히 보기</a></li>
-        <li>스터디 2 <a href="/study/2" class="detail-link">자세히 보기</a></li>
-        <li>스터디 3 <a href="/study/3" class="detail-link">자세히 보기</a></li>
+        <% studies.forEach(study=> { %>
+          <li class="study-item">
+            <strong>
+              <%= study.title %>
+            </strong><br>
+            <div class="button-group">
+              <form action="/studyR/studies/delete/<%= study.id %>" method="POST" style="display:inline;">
+                <button type="submit" class="study-button delete-button">삭제</button>
+              </form>
+              <form action="/studyR/studies/edit/<%= study.id %>" method="GET" style="display:inline;">
+                <button type="submit" class="study-button edit-button">수정</button>
+              </form>
+            </div>
+          </li>
+          <% }) %>
       </ul>
+
+      <!-- 스터디 등록 -->
       <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
     </section>
+
   </main>
-  
-       <!-- 스터디 등록 페이지로 이동하는 버튼 -->
-  <button id="toStudyWrite">스터디 등록하기</button>
-  <% studies.forEach(study => { %>
-   <li>
-     <strong><%= study.title %></strong><br>
-     <form action="/studyR/studies/delete/<%= study.id %>" method="POST" style="display:inline;">
-       <button type="submit">삭제</button>
-     </form>
-     <form action="/studyR/studies/edit/<%= study.id %>" method="GET" style="display:inline;">
-      <button type="submit">수정</button>
-     </form>
 
-   </li>
-  <% }) %>
-
-  
-  <script>
+   <script>
     document.getElementById('toStudyWrite').addEventListener('click', () => {
       window.location.href = '/studyR/studies/new';  // 스터디 등록 페이지 라우트 URL
     });

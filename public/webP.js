@@ -8,28 +8,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-const carousel = document.querySelector('.carousel-images');
-const slides = document.querySelectorAll('.carousel-images img');
-const prevBtn = document.querySelector('.prev');
-const nextBtn = document.querySelector('.next');
+document.addEventListener("DOMContentLoaded", function () {
+    const wrapper = document.querySelector('.carousel-wrapper');
+    const carousel = document.querySelector('.carousel-images');
+    const slides = document.querySelectorAll('.carousel-images img');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+
 
 let index = 0;
+let timer;
 
 function updateCarousel() {
-    carousel.style.transform = `translateX(-${index * 600}px)`;
-}
+        const slideWidth = wrapper.clientWidth;
+        carousel.style.transform = `translateX(-${index * slideWidth}px)`;
+    }
 
-prevBtn.addEventListener('click', () => {
-    index = (index - 1 + slides.length) % slides.length;
+    function showNextSlide() {
+        index = (index + 1) % slides.length;
+        updateCarousel();
+    }
+
+    function showPrevSlide() {
+        index = (index - 1 + slides.length) % slides.length;
+        updateCarousel();
+    }
+
+    prevBtn.addEventListener('click', showPrevSlide);
+    nextBtn.addEventListener('click', showNextSlide);
+
+    window.addEventListener('resize', updateCarousel);
     updateCarousel();
-});
 
-nextBtn.addEventListener('click', () => {
-    index = (index + 1) % slides.length;
-    updateCarousel();
-});
-// 반응형 대응: 브라우저 크기 변경 시 슬라이드 위치 보정
-window.addEventListener('resize', updateCarousel);
+    // ✅ 자동 슬라이드 시작 함수
+    function startAutoSlide() {
+        timer = setInterval(showNextSlide, 3000);
+    }
 
-// 초기 위치
-updateCarousel();
+    // ✅ 자동 슬라이드 멈춤 함수
+    function stopAutoSlide() {
+        clearInterval(timer);
+    }
+
+    // ✅ 마우스 올라가면 멈춤 / 벗어나면 다시 시작
+    wrapper.addEventListener('mouseenter', stopAutoSlide);
+    wrapper.addEventListener('mouseleave', startAutoSlide);
+
+    // 초기 자동 슬라이드 시작
+    startAutoSlide();
+});
