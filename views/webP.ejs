@@ -134,18 +134,20 @@
                 <p>조건에 맞는 스터디가 없습니다.</p>
             <% } else { %>
                 <% studies.forEach(study => { %>
-                <div class="project-card">
-                    <strong><%= study.title %></strong><br/>
-                    기술: <% try {
-                    const techs = JSON.parse(study.techstack);
-                    techs.forEach(t => { %>
-                        <span><%= t.value %></span>
-                    <% }) } catch(e) { %>
-                    <%= study.techstack %>
-                    <% } %> |
-                    방식: <%= study.progress_method %> |
-                    마감일: <%= study.deadline %>
-                </div>
+                    <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
+                        <div class="project-card">
+                        <strong><%= study.title %></strong><br/>
+                         기술: <% try {
+                          const techs = JSON.parse(study.techstack);
+                          techs.forEach(t => { %>
+                           <span><%= t.value %></span>
+                        <% }) } catch(e) { %>
+                        <%= study.techstack %>
+                        <% } %> |
+                         방식: <%= study.progress_method %> |
+                         마감일: <%= study.deadline %>
+                        </div>
+                    </a>
                 <% }) %>
             <% } %>
             </div>

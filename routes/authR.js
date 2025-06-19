@@ -47,8 +47,10 @@ router.post('/kakao', async (req, res) => {
 
     // JWT 생성
     const token = jwt.sign({ kakaoId, nickname }, JWT_SECRET, { expiresIn: '1h' });
+    res
+      .cookie('currentUserId', kakaoId, { httpOnly: true }) // ✅ 이 줄 추가
+      .json({ username: nickname, token });
 
-    res.json({ username: nickname, token });
 
   } catch (err) {
     console.error('카카오 API 오류:', err.message);

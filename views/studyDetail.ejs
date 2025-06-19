@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= study.title %> - 스터디 상세</title>
+
+  <!--  Kakao Maps API (환경변수로 전달된 키 사용) -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%= kakaoKey %>"></script>
+</head>
+<body>
+  <h2><%= study.title %></h2>
+
+  <p><strong>설명:</strong> <%= study.description %></p>
+
+  <p><strong>기술 스택:</strong>
+    <% 
+      let stack = '';
+      try {
+        if (typeof study.techstack === 'string') {
+          stack = JSON.parse(study.techstack).map(t => t.value).join(', ');
+        } else if (Array.isArray(study.techstack)) {
+          stack = study.techstack.map(t => t.value).join(', ');
+        }
+      } catch (e) { stack = '(파싱 실패)'; }
+    %>
+    <%= stack %>
+  </p>
+
+  <p><strong>팀원 수:</strong> <%= study.team_size %></p>
+  <p><strong>진행 방식:</strong> <%= study.progress_method %></p>
+  <p><strong>마감일:</strong> <%= study.deadline %></p>
+  <p><strong>요구사항:</strong> <%= study.requirements %></p>
+
+  <% if (study.location_lat && study.location_lng) { %>
+    <div id="map" style="width: 100%; height: 350px;"></div>
+  <% } %>
+
+ <% if (!alreadyApplied) { %>
+  <a href="/studyR/apply/<%= study.id %>/form">지원하기</a>
+ <% } else { %>
+  <p><strong>지원 완료!</strong></p>
+ <% } %>
+
+
+
+  <% if (study.location_lat && study.location_lng) { %>
+  <div id="map" style="width:100%; height:350px;"></div>
+  <script>
+    function initMap() {
+      const lat = parseFloat("<%= study.location_lat %>");
+      const lng = parseFloat("<%= study.location_lng %>");
+
+      console.log("📍 지도 좌표:", lat, lng);
+
+      const container = document.getElementById("map");
+      const options = {
+        center: new kakao.maps.LatLng(lat, lng),
+        level: 3
+      };
+      const map = new kakao.maps.Map(container, options);
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(lat, lng),
+        map: map
+      });
+    }
+    window.onload = function () {
+      if (typeof kakao !== 'undefined' && kakao.maps) {
+        initMap();
+      } else {
+        console.error("❌ Kakao Maps SDK가 로드되지 않았습니다.");
+      }
+    };
+  </script>
+<% } %>
+
+
+</body>
+</html>
+
+
+

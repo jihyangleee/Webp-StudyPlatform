@@ -1,0 +1,64 @@
+{
+  "1750263866580": [
+    {
+      "userId": "4276029693",
+      "name": "ㄴㅇㄹ",
+      "age": "34",
+      "email": "sdf@df",
+      "stack": "sdf",
+      "intro": "sdf",
+      "reason": "sdf",
+      "github": "",
+      "status": "합격"
+    }
+  ],
+  "1750267840294": [],
+  "1750268302562": [],
+  "1750268392874": [],
+  "1750323349209": [
+    {
+      "userId": "user001",
+      "name": "홍길동",
+      "age": "25",
+      "email": "gildong@example.com",
+      "stack": "JavaScript",
+      "intro": "안녕하세요. 프론트엔드에 관심 많습니다.",
+      "reason": "스터디를 통해 성장하고 싶습니다.",
+      "github": "https://github.com/user001",
+      "status": "합격"
+    },
+    {
+      "userId": "user002",
+      "name": "임꺽정",
+      "age": "28",
+      "email": "kkj@example.com",
+      "stack": "Python",
+      "intro": "AI에 관심 많아요.",
+      "reason": "함께 공부해보고 싶습니다.",
+      "github": "",
+      "status": "불합격"
+    },
+    {
+      "userId": "user003",
+      "name": "이순신",
+      "age": "31",
+      "email": "sshin@example.com",
+      "stack": "Java",
+      "intro": "백엔드 개발자입니다.",
+      "reason": "백엔드 협업을 경험하고 싶어요.",
+      "github": "https://github.com/user003",
+      "status": "합격"
+    },
+    {
+      "userId": "user004",
+      "name": "신사임당",
+      "age": "27",
+      "email": "ssd@example.com",
+      "stack": "React",
+      "intro": "디자인과 프론트에 강합니다.",
+      "reason": "협업 경험을 쌓고 싶어요.",
+      "github": "",
+      "status": "불합격"
+    }
+  ]
+}

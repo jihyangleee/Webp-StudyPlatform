@@ -136,5 +136,35 @@
     "location_lat": "",
     "location_lng": "",
     "action": "upload"
+  },
+  {
+    "id": "1750319999999",
+    "writer": "kakao_123456789",
+    "title": "서울역에서 만나요",
+    "description": "서울역 근처에서 진행되는 스터디입니다.",
+    "techstack": "[{\"value\":\"JavaScript\"},{\"value\":\"Node.js\"}]",
+    "team_size": "5",
+    "progress_method": "오프라인",
+    "deadline": "2025-06-30",
+    "requirements": "기초적인 웹 개발 지식",
+    "thumbnail": "",
+    "location_lat": "37.554722",
+    "location_lng": "126.970833",
+    "action": "upload"
+  },
+  {
+    "id": "1750323349209",
+    "writer": "4276029693",
+    "title": "테스트용",
+    "description": "테스트용입니다",
+    "techstack": "[{\"value\":\"제발\"}]",
+    "team_size": "3",
+    "progress_method": "오프라인",
+    "deadline": "2025-06-25",
+    "requirements": "제발 되라",
+    "thumbnail": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "upload"
   }
 ]

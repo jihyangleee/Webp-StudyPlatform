@@ -54,6 +54,10 @@
               <form action="/studyR/studies/edit/<%= study.id %>" method="GET" style="display:inline;">
                 <button type="submit" class="study-button edit-button">수정</button>
               </form>
+              <form action="/studyR/studies/manage/<%= study.id %>" method="GET" style="display:inline;">
+                <button type="submit" class="study-button manage-button">지원자 관리</button>
+              </form>
+
             </div>
           </li>
           <% }) %>
@@ -62,6 +66,33 @@
       <!-- 스터디 등록 -->
       <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
     </section>
+
+    <hr>
+<section class="study-box">
+  <p class="study-label"> 수강 중인 스터디</p>
+  <ul class="study-list">
+    <% ongoing.forEach(app => { %>
+      <li class="study-item">
+        <strong><%= app.studyTitle %></strong><br>
+        상태: <%= app.status %>
+      </li>
+    <% }) %>
+  </ul>
+
+  <p class="study-label"> 대기 중 / 불합격</p>
+  <ul class="study-list">
+    <% pending.forEach(app => { %>
+      <li class="study-item">
+        <strong><%= app.studyTitle %></strong><br>
+        상태: <%= app.status || "대기 중" %><br>
+        <form action="/studyR/applications/delete/<%= app.studyId %>" method="POST">
+          <button type="submit" class="study-button delete-button">삭제</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
 
   </main>
 

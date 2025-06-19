@@ -1,0 +1,37 @@
+<h2><%= study.title %> 지원자 관리</h2>
+
+<h3> 합격자 명단</h3>
+<ul>
+  <% approved.forEach(app => { %>
+    <li><%= app.name %> (<%= app.email %>)</li>
+  <% }) %>
+  <% if (approved.length === 0) { %>
+    <li>아직 없음</li>
+  <% } %>
+</ul>
+
+<hr>
+
+<h3>미처리 지원자 목록</h3>
+<ul>
+  <% pending.forEach(app => { %>
+    <li>
+      <strong><%= app.name %></strong> (<%= app.email %>)  
+      - 상태: <%= app.status || "미정" %><br>
+      기술스택: <%= app.stack %><br>
+      소개: <%= app.intro %><br>
+      지원동기: <%= app.reason %><br>
+      포트폴리오: <%= app.github %><br>
+
+      <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" style="display:inline;">
+        <input type="hidden" name="status" value="합격">
+        <button type="submit">합격</button>
+      </form>
+      <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" style="display:inline;">
+        <input type="hidden" name="status" value="불합격">
+        <button type="submit">불합격</button>
+      </form>
+    </li>
+    <hr>
+  <% }) %>
+</ul>

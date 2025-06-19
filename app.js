@@ -28,6 +28,8 @@ app.use('/dist', express.static(path.join(__dirname, 'dist')));
 app.use('/', authRouter);
 app.use('/users', usersRouter); // 필요 시
 app.use('/studyR',studyRouter);
+
+
 // 404 처리
 app.use((req, res, next) => {
   next(createError(404));

@@ -1,0 +1,11 @@
+<h2>지원서 작성</h2>
+<form action="/studyR/apply/<%= studyId %>" method="POST">
+  <p>이름: <input type="text" name="name" required></p>
+  <p>나이: <input type="number" name="age" required></p>
+  <p>이메일: <input type="email" name="email" required></p>
+  <p>가능한 기술스택: <input type="text" name="stack"></p>
+  <p>자기소개: <textarea name="intro" required></textarea></p>
+  <p>지원 동기: <textarea name="reason" required></textarea></p>
+  <p>포트폴리오 링크: <input type="url" name="github"></p>
+  <button type="submit">제출</button>
+</form>
