@@ -81,7 +81,8 @@ router.get('/webP', (req, res) => {
     const fileData = fs.readFileSync(filePath, 'utf8');
     studies = fileData ? JSON.parse(fileData) : [];
   }
-  res.render('webP',{studies});  // views/webP.ejs를 렌더링
+   
+  res.render('webP', {studies: studies});  // views/webP.ejs를 렌더링
 });
 
 //필터링 기능 구현

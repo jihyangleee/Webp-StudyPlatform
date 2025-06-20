@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, 'uploads')); // 파일 저장 폴더
   },
   filename: function (req, file, cb) {
-    const uniqueName = Date.now() + '-' + file.originalname;
+    const uniqueName = file.originalname;
     cb(null, uniqueName);
   }
 });
@@ -27,8 +27,11 @@ const authRouter = require('./routes/authR');
 const usersRouter = require('./routes/users'); // 필요한 경우
 const studyRouter = require('./routes/studyR');
 const app = express();
-
+let lastUploadedImage = null;
 app.post('/uploads', upload.single('thumbnail'), (req, res) => {
+   if (!req.file) return res.status(400).send('파일 없음');
+
+  lastUploadedImage = '/uploads/' + req.file.filename;
   console.log('파일 정보:', req.file);
   res.send('업로드 성공!');
 });
