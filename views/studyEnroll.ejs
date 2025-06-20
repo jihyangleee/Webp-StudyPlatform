@@ -84,31 +84,7 @@
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>&libraries=services"></script>
 
     <script>
-      document.getElementById("upload").addEventListener("click", () => {
-  const fileInput = document.getElementById("thumbnailInput");
-  const file = fileInput.files[0];
-
-  if (!file) {
-    alert("파일을 선택하세요.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("thumbnail", file);
-
-  fetch("/uploads", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(result => {
-    console.log("서버 응답:", result);
-    alert("업로드 완료");
-  })
-  .catch(err => {
-    console.error("업로드 실패:", err);
-  });
-});
+    
   // 초기화
 const mapContainer = document.getElementById('map');
 const mapOption = {

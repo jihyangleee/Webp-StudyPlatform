@@ -159,8 +159,8 @@
       <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
         <div class="project-card">
 
-          <% if (study.thumbnail) { %>
-            <img src="/uploads/<%= study.thumbnail %>" alt="썸네일" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;" />
+          <% if (study.thumbnailPath) { %>
+            <img src="<%= study.thumbnailPath %>" alt="썸네일" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;" />
           <% } %>
 
           <strong><%= study.title %></strong><br/>

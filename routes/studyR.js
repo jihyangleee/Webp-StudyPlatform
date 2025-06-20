@@ -149,7 +149,22 @@ router.get('/autocomplete', (req, res) => {
 });
   
 // 글 저장
-router.post('/studies', (req, res) => {
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads/'));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);  // 예: '.png'
+    const baseName = path.basename(file.originalname, ext);
+    const uniqueSuffix = Date.now();
+    cb(null, `${baseName}-${uniqueSuffix}${ext}`);
+  }
+});
+
+const upload = multer({ storage });
+router.post('/studies', upload.single('thumbnail'), (req, res) => {
   const data = req.body;
   const userId = req.cookies.currentUserId;
   const action = req.body.action;
@@ -164,7 +179,8 @@ router.post('/studies', (req, res) => {
   const newStudy = {
     id: Date.now().toString(),
     writer: userId || 'anonymous',
-    ...data
+    ...data,
+    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : null // ← 파일 경로 저장
   };
 
   studies.push(newStudy);
@@ -175,7 +191,8 @@ router.post('/studies', (req, res) => {
       console.error(err);
       return res.status(500).send('저장 실패');
     }
-     if (action ==='upload') {
+
+    if (action === 'upload') {
       res.redirect('/studyR/webP');
     } else {
       res.redirect('/studyR/mypage');
@@ -210,24 +227,37 @@ router.get('/studies/edit/:id', (req, res) => {
   res.render('studyEnroll', { study });
 });
 
-// 수정 반영 저장
-router.post('/studies/edit/:id', (req, res) => {
+router.post('/studies/edit/:id', upload.single('thumbnail'), (req, res) => {
   const action = req.body.action;
   const id = req.params.id;
   const filePath = path.join(__dirname, '../src/studies.json');
+
+  // 기존 데이터 불러오기
   const fileData = fs.readFileSync(filePath, 'utf8');
   let studies = JSON.parse(fileData);
   const index = studies.findIndex(study => study.id === id);
   if (index === -1) return res.status(404).send('글 없음');
 
-  studies[index] = { ...studies[index], ...req.body };
-  fs.writeFileSync(filePath, JSON.stringify(studies, null, 2), 'utf8');
-  if (action ==='upload') {
-      res.redirect('/studyR/webP');
-    } else {
-      res.redirect('/studyR/mypage');
-    }
+  // 기존 글 가져오기
+  const existing = studies[index];
 
+  // 새로 업로드된 썸네일이 있으면 경로 갱신
+  const updatedStudy = {
+    ...existing,
+    ...req.body,
+    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : existing.thumbnailPath
+  };
+
+  // 업데이트
+  studies[index] = updatedStudy;
+
+  fs.writeFileSync(filePath, JSON.stringify(studies, null, 2), 'utf8');
+
+  if (action === 'upload') {
+    res.redirect('/studyR/webP');
+  } else {
+    res.redirect('/studyR/mypage');
+  }
 });
 
 // 스터디 자세히보기
