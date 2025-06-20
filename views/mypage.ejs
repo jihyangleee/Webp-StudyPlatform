@@ -5,6 +5,13 @@
   <title>SPARK - MYPAGE</title>
   <link rel="stylesheet" href="/stylesheets/myapage.css">
   <link rel="icon" href="/favicon.png" type="image/png">
+  <!-- ✅ FullCalendar CSS -->
+  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
+
+  <!-- ✅ FullCalendar JS (global 버전) -->
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.global.min.js'></script>
 </head>
 <body>
   <header class="header">
@@ -92,13 +99,45 @@
     <% }) %>
   </ul>
 </section>
+</main>
+<h1>내 구글 캘린더 보기</h1>
+<div id='calendar' style="max-width: 900px; margin: 0 auto;"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
 
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+  initialView: 'dayGridMonth',
+  locale: 'ko',
+  googleCalendarApiKey: 'YOUR_GOOGLE_API_KEY',
+  events: {
+    googleCalendarId: 'hyanglee0508d@gmail.com'
+  },
+  selectable: true, // 일정 선택 가능
+  select: function(info) {
+    const title = prompt('일정 제목을 입력하세요');
+    if (title) {
+      calendar.addEvent({
+        title: title,
+        start: info.startStr,
+        end: info.endStr,
+        allDay: info.allDay
+      });
 
-  </main>
+      // 🚨 여기서 Google Calendar API 호출해야 DB 반영됨
+      // fetch('/add-google-event', {...})
+    }
+    calendar.unselect();
+  },
+  eventClick: function(info) {
+    info.jsEvent.preventDefault();
+    if (info.event.url) {
+      window.open(info.event.url, '_blank');
+    }
+  }
+});
 
-   <script>
-    document.getElementById('toStudyWrite').addEventListener('click', () => {
-      window.location.href = '/studyR/studies/new';  // 스터디 등록 페이지 라우트 URL
+      calendar.render();
     });
   </script>
 </body>
