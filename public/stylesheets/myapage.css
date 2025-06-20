@@ -6,6 +6,8 @@ body {
 .notification-wrapper {
   position: relative;
   display: inline-block;
+  top:100px;
+  left : 500px;
 }
 
 .badge {

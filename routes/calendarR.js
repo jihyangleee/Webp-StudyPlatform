@@ -69,7 +69,8 @@ router.post('/add-google-event', async (req, res) => {
   }
 });
 
-
+// 구글 클라우드 캘린더에 있는거 불러오기 위함
+const eventsPath = path.join(__dirname, '../src/schedule.json');
 router.get('/list-google-events', async (req, res) => {
   try {
     const tokens = req.session.tokens;
@@ -95,7 +96,7 @@ router.get('/list-google-events', async (req, res) => {
       end: event.end.dateTime || event.end.date,
       allDay: !event.start.dateTime
     }));
-
+    fs.writeFileSync(eventsPath, JSON.stringify(events, null, 2));
     res.json(events);
   } catch (err) {
     console.error('❌ list-google-events error:', err);

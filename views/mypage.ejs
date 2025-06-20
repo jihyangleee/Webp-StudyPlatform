@@ -19,19 +19,56 @@
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.global.min.js'></script>
 </head>
 <body>
-  <h2>📢 알림</h2>
-<ul>
-  <% if (notifications && notifications.length > 0) { %>
-    <% notifications.forEach(noti => { %>
-      <li>
-        <strong><%= noti.message %></strong> (<%= new Date(noti.timestamp).toLocaleString() %>)
-        <% if (!noti.read) { %> <span style="color:red;">[읽지 않음]</span> <% } %>
-      </li>
-    <% }) %>
-  <% } else { %>
-    <li>알림이 없습니다.</li>
-  <% } %>
-</ul>
+ <!-- ajax 구현 -->
+<script>
+  async function loadNotifications() {
+    const res = await fetch('/studyR/notifications');
+    const data = await res.json();
+
+    // 읽지 않은 알림 수 표시
+    const count = data.notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notification-count');
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline-block' : 'none';
+
+    // 알림 리스트 렌더링
+    const list = document.getElementById('notification-list');
+    list.innerHTML = data.notifications.map(n => `
+      <div style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <div>
+          ${n.message}
+          <br>
+          <small>${new Date(n.timestamp).toLocaleString()}</small>
+          ${n.read ? '<span style="color:gray;">[읽음]</span>' : '<span style="color:red;">[안읽음]</span>'}
+        </div>
+        <div style="margin-top:4px;">
+          ${!n.read ? `<button onclick="markAsRead('${n.timestamp}')">읽음</button>` : ''}
+          <button onclick="deleteNoti('${n.timestamp}')">삭제</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function markAsRead(timestamp) {
+    await fetch(`/studyR/notifications/${timestamp}/read`, { method: 'POST' });
+    loadNotifications();
+  }
+
+  async function deleteNoti(timestamp) {
+    await fetch(`/studyR/notifications/${timestamp}/delete`, { method: 'POST' });
+    loadNotifications();
+  }
+
+  document.getElementById('notification-bell').addEventListener('click', () => {
+    const list = document.getElementById('notification-list');
+    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // 최초 실행 및 주기적 갱신
+  loadNotifications();
+  setInterval(loadNotifications, 5000);
+</script>
+
   <header class="header">
     <div class="logo">
       <img src="/favicon.png" alt="로고" class="favicon">
@@ -122,14 +159,20 @@
 <a href="/calendarR/auth/google">📅 Google 로그인</a>
 <button id="load-events-btn">📅 일정 불러오기</button>
 <div id="calendar"></div>
-  <script>document.addEventListener('DOMContentLoaded', function () {
+  <script>
+  const serverEvents = <%- JSON.stringify(events) %>;
+  document.addEventListener('DOMContentLoaded', function () {
   const calendarEl = document.getElementById('calendar');
 
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     selectable: true,
     locale: 'ko',
-    eventSources: [], // 처음에는 비워둠
+    eventSources: [
+        {
+          events: serverEvents
+        }
+      ], // 처음에는 비워둠
 
     select: async function (info) {
       const title = prompt('일정 제목을 입력하세요');

@@ -5,9 +5,11 @@ var fs = require('fs');
 var path = require('path');
 
 // 마이페이지 렌더링
+const eventsPath = path.join(__dirname, '../src/schedule.json');
 const notificationFile = path.join(__dirname, '../src/notifications.json');
 router.get('/mypage', (req, res) => {
   // const userFilePath = path.join(__dirname, '../user.json');
+  const savedEvents = JSON.parse(fs.readFileSync(eventsPath, 'utf8')); //캘린더 내용임
   const filePath = path.join(__dirname, '../src/studies.json');
   const appFile = path.join(__dirname, '../src/applications.json');
   // const users = JSON.parse(fs.readFileSync(userFilePath, 'utf8'));
@@ -74,7 +76,8 @@ router.get('/mypage', (req, res) => {
 
   const ongoing = myApplications.filter(app => app.status === '합격');
   const pending = myApplications.filter(app => !app.status || app.status === '불합격' || app.status === '대기중');
-
+  //캘린더 내용 그대로 렌더링
+  const events = Array.isArray(savedEvents) ? savedEvents : [];
 
   // 렌더링할 때 함께 넘기기
   res.render('mypage', {
@@ -82,7 +85,8 @@ router.get('/mypage', (req, res) => {
     notifications: userNoti,
     studies: filtered,
     ongoing,
-    pending
+    pending,
+    events
   });
 });
 
@@ -397,6 +401,57 @@ router.post('/apply/:id', (req, res) => {
   res.redirect('/studyR/mypage');
 });
 
+router.get('/notifications', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.json({ notifications: [] });
+
+  let notifications = {};
+  if (fs.existsSync(notificationFile)) {
+    try {
+      notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+    } catch (err) {
+      console.error('알림 파싱 실패:', err);
+    }
+  }
+
+  const userNoti = notifications[userId] || [];
+  res.json({ notifications: userNoti });
+});
+//알림기능 읽음 처리
+router.post('/notifications/:timestamp/read', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.status(403).send('로그인이 필요합니다.');
+
+  if (!fs.existsSync(notificationFile)) return res.status(404).send('알림 파일 없음');
+  const notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+
+  if (!Array.isArray(notifications[userId])) return res.status(404).send('알림 없음');
+
+  notifications[userId] = notifications[userId].map(noti => {
+    if (noti.timestamp === req.params.timestamp) {
+      return { ...noti, read: true };
+    }
+    return noti;
+  });
+
+  fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+  res.sendStatus(200);
+});
+//알림기능 삭제 처리
+router.post('/notifications/:timestamp/delete', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.status(403).send('로그인이 필요합니다.');
+
+  if (!fs.existsSync(notificationFile)) return res.status(404).send('알림 파일 없음');
+  const notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+
+  if (!Array.isArray(notifications[userId])) return res.status(404).send('알림 없음');
+
+  notifications[userId] = notifications[userId].filter(noti => noti.timestamp !== req.params.timestamp);
+
+  fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+  res.sendStatus(200);
+});
 
 // 지원자 관리
 router.get('/studies/manage/:id', (req, res) => {

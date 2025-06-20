@@ -89,19 +89,7 @@
       "status": "합격"
     }
   ],
-  "1750402855893": [
-    {
-      "userId": "4279639219",
-      "name": "이지향",
-      "age": "23",
-      "email": "hyanglee0508@naver.com",
-      "stack": "fdf",
-      "intro": "dfdf",
-      "reason": "dfdf",
-      "github": "http://127.0.0.1:8000/studyR/apply/1750267969796/form",
-      "status": "대기중"
-    }
-  ],
+  "1750402855893": [],
   "1750401531141": [
     {
       "userId": "4279639219",
@@ -109,8 +97,8 @@
       "age": "23",
       "email": "hyanglee0508@naver.com",
       "stack": "fdf",
-      "intro": "dfd",
-      "reason": "fdfdf",
+      "intro": "gpt",
+      "reason": "gpt",
       "github": "http://127.0.0.1:8000/studyR/apply/1750267969796/form",
       "status": "대기중"
     }
