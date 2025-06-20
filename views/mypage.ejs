@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <div class="notification-wrapper">
+  <span id="notification-bell">🔔</span>
+  <span id="notification-count" class="badge" style="display: none;"></span>
+  <div id="notification-list" class="notification-dropdown" style="display: none;"></div>
+  </div>
   <meta charset="UTF-8" />
   <title>SPARK - MYPAGE</title>
   <link rel="stylesheet" href="/stylesheets/myapage.css">
@@ -14,6 +19,19 @@
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.global.min.js'></script>
 </head>
 <body>
+  <h2>📢 알림</h2>
+<ul>
+  <% if (notifications && notifications.length > 0) { %>
+    <% notifications.forEach(noti => { %>
+      <li>
+        <strong><%= noti.message %></strong> (<%= new Date(noti.timestamp).toLocaleString() %>)
+        <% if (!noti.read) { %> <span style="color:red;">[읽지 않음]</span> <% } %>
+      </li>
+    <% }) %>
+  <% } else { %>
+    <li>알림이 없습니다.</li>
+  <% } %>
+</ul>
   <header class="header">
     <div class="logo">
       <img src="/favicon.png" alt="로고" class="favicon">
