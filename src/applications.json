@@ -60,5 +60,18 @@
       "github": "",
       "status": "불합격"
     }
+  ],
+  "1750267969796": [
+    {
+      "userId": "4279639219",
+      "name": "dfdf",
+      "age": "14",
+      "email": "hyanglee0508@naver.com",
+      "stack": "fdf",
+      "intro": "fddf",
+      "reason": "dfdf",
+      "github": "http://127.0.0.1:8000/studyR/apply/1750267969796/form",
+      "status": "대기중"
+    }
   ]
 }

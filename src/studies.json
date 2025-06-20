@@ -1,31 +1,5 @@
 [
   {
-    "id": "1750263866580",
-    "title": "ㅇㄹㄹㄴ",
-    "description": "ㅇㄹㅇㄹ",
-    "techstack": "[{\"value\":\"ㅇㄹㅇ\"}]",
-    "team_size": "2",
-    "progress_method": "오프라인",
-    "deadline": "2025-06-27",
-    "requirements": "dfdf",
-    "thumbnail": "",
-    "location_lat": "",
-    "location_lng": ""
-  },
-  {
-    "id": "1750263866581",
-    "title": "ㅇㄹㄹㄴ",
-    "description": "ㅇㄹㅇㄹ",
-    "techstack": "[{\"value\":\"ㅇㄹㅇ\"}]",
-    "team_size": "2",
-    "progress_method": "오프라인",
-    "deadline": "2025-06-27",
-    "requirements": "dfdf",
-    "thumbnail": "",
-    "location_lat": "",
-    "location_lng": ""
-  },
-  {
     "id": "1750267834413",
     "title": "ㅇㄹㅇㄹ",
     "description": "ㅇㄹㅇㄹ",
@@ -165,6 +139,37 @@
     "thumbnail": "",
     "location_lat": "",
     "location_lng": "",
+    "action": "enroll"
+  },
+  {
+    "id": "1750345429896",
+    "writer": "4279639219",
+    "title": "ㅇㄹㅇㄹ",
+    "description": "ㄹㅇㄹ",
+    "techstack": "[{\"value\":\"ㅇㄹㅇㄹ\"}]",
+    "team_size": "1",
+    "progress_method": "오프라인",
+    "deadline": "2025-06-19",
+    "requirements": "dfdf",
+    "thumbnail": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "upload"
+  },
+  {
+    "id": "1750355823752",
+    "writer": "4279639219",
+    "title": "ㄹㅇㄹ",
+    "description": "ㅇㄹㅇㄹ",
+    "techstack": "[{\"value\":\"ㅇㄹㅇㄹ\"}]",
+    "team_size": "1",
+    "progress_method": "온라인",
+    "deadline": "2025-06-26",
+    "requirements": "",
+    "thumbnail": "",
+    "place": "",
+    "location_lat": "37.568346431686464",
+    "location_lng": "126.97627477412054",
     "action": "enroll"
   }
 ]
