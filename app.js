@@ -23,6 +23,7 @@ const fs = require('fs');
 //   }
 // });
 // const upload = multer({ storage: storage });
+const calendarRouter = require('./routes/calendarR');
 const authRouter = require('./routes/authR');
 const usersRouter = require('./routes/users'); // 필요한 경우
 const studyRouter = require('./routes/studyR');
@@ -42,7 +43,12 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
+const session = require('express-session');
+app.use(session({
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: true
+}));
 
 
 // 미들웨어
@@ -56,7 +62,7 @@ app.use('/dist', express.static(path.join(__dirname, 'dist')));
 app.use('/', authRouter);
 app.use('/users', usersRouter); // 필요 시
 app.use('/studyR',studyRouter);
-
+app.use('/calendarR', calendarRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 404 처리
 app.use((req, res, next) => {

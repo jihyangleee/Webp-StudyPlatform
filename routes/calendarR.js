@@ -1,8 +1,11 @@
 require('dotenv').config();
 const express = require('express');
+var router = express.Router();
 const { google } = require('googleapis');
 const session = require('express-session');
 const app = express();
+const fs = require('fs');
+const path = require('path');
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -10,36 +13,38 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.REDIRECT_URI
 );
 
-app.use(session({ secret: 'my-secret', resave: false, saveUninitialized: true }));
-
 // ✅ STEP 2: 로그인 요청 보내기
-app.get('/auth/google', (req, res) => {
+router.get('/auth/google', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: ['https://www.googleapis.com/auth/calendar'],
-    prompt: 'consent' // refresh_token 항상 받기 위함
+    prompt: 'consent'
   });
   res.redirect(url);
 });
 
-// ✅ STEP 3: 구글이 리디렉션한 후 토큰 저장
-app.get('/auth/google/callback', async (req, res) => {
+// ✅ STEP 3: 콜백에서 토큰 저장
+router.get('/auth/google/callback', async (req, res) => {
   const { code } = req.query;
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens);
   req.session.tokens = tokens;
-  res.redirect('/calendar'); // 로그인 후 리디렉션 페이지
+  res.redirect('/studyR/mypage'); // 로그인 후 리디렉션
 });
 
-// ✅ STEP 4: FullCalendar UI 제공 (이건 클라이언트 JS로)
-app.get('/calendar', (req, res) => {
-  res.sendFile(__dirname + '/calendar.html');
-});
+// router.get('/calendar', (req, res) => {
+//   const filePath = path.join(__dirname, '../src/studies.json');
+//   let studies = [];
+//   if (fs.existsSync(filePath)) {
+//     const fileData = fs.readFileSync(filePath, 'utf8');
+//     studies = fileData ? JSON.parse(fileData) : [];
+//   }
 
-// ✅ STEP 5: 클라이언트에서 일정 추가 요청 → 서버가 Google API 호출
-app.use(express.json());
+//   res.render('mypage', { studies }); // ✅ studies 전달
+// });
 
-app.post('/add-google-event', async (req, res) => {
+// ✅ STEP 5: 구글 캘린더 API로 일정 추가
+router.post('/add-google-event', async (req, res) => {
   const tokens = req.session.tokens;
   if (!tokens) return res.status(401).send('Not authenticated');
 
@@ -53,7 +58,7 @@ app.post('/add-google-event', async (req, res) => {
   };
 
   try {
-    const response = await calendar.events.insert({
+    await calendar.events.insert({
       calendarId: 'primary',
       resource: event
     });
@@ -61,6 +66,40 @@ app.post('/add-google-event', async (req, res) => {
   } catch (err) {
     console.error('Error inserting event:', err);
     res.status(500).send('Error inserting event');
+  }
+});
+
+
+router.get('/list-google-events', async (req, res) => {
+  try {
+    const tokens = req.session.tokens;
+    if (!tokens) return res.status(401).send('Not authenticated');
+
+    oauth2Client.setCredentials(tokens);
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const start = new Date(req.query.start);
+    const end = new Date(req.query.end);
+
+    const result = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: start.toISOString(),
+      timeMax: end.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime'
+    });
+
+    const events = result.data.items.map(event => ({
+      title: event.summary,
+      start: event.start.dateTime || event.start.date,
+      end: event.end.dateTime || event.end.date,
+      allDay: !event.start.dateTime
+    }));
+
+    res.json(events);
+  } catch (err) {
+    console.error('❌ list-google-events error:', err);
+    res.status(500).send(err.message);
   }
 });
 module.exports = router;

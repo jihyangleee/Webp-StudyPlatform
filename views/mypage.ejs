@@ -101,44 +101,67 @@
 </section>
 </main>
 <h1>내 구글 캘린더 보기</h1>
-<div id='calendar' style="max-width: 900px; margin: 0 auto;"></div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const calendarEl = document.getElementById('calendar');
+<a href="/calendarR/auth/google">📅 Google 로그인</a>
+<button id="load-events-btn">📅 일정 불러오기</button>
+<div id="calendar"></div>
+  <script>document.addEventListener('DOMContentLoaded', function () {
+  const calendarEl = document.getElementById('calendar');
 
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-  initialView: 'dayGridMonth',
-  locale: 'ko',
-  googleCalendarApiKey: 'YOUR_GOOGLE_API_KEY',
-  events: {
-    googleCalendarId: 'hyanglee0508d@gmail.com'
-  },
-  selectable: true, // 일정 선택 가능
-  select: function(info) {
-    const title = prompt('일정 제목을 입력하세요');
-    if (title) {
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    selectable: true,
+    locale: 'ko',
+    eventSources: [], // 처음에는 비워둠
+
+    select: async function (info) {
+      const title = prompt('일정 제목을 입력하세요');
+      if (!title) return;
+
+      const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
+      if (!startTime) return;
+
+      const endTime = prompt('종료 시간 (예: 10:00)', '10:00');
+      if (!endTime) return;
+
+      const startDate = new Date(info.startStr + 'T' + startTime + ':00+09:00');
+      const endDate = new Date(info.startStr + 'T' + endTime + ':00+09:00');
+      if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+
+      const start = startDate.toISOString();
+      const end = endDate.toISOString();
+
+      // UI에 바로 표시
       calendar.addEvent({
         title: title,
-        start: info.startStr,
-        end: info.endStr,
-        allDay: info.allDay
+        start: start,
+        end: end,
+        allDay: false
       });
 
-      // 🚨 여기서 Google Calendar API 호출해야 DB 반영됨
-      // fetch('/add-google-event', {...})
+      // 서버로 전송
+      await fetch('/calendarR/add-google-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, start, end })
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg));
     }
-    calendar.unselect();
-  },
-  eventClick: function(info) {
-    info.jsEvent.preventDefault();
-    if (info.event.url) {
-      window.open(info.event.url, '_blank');
-    }
-  }
-});
+  });
 
-      calendar.render();
+  calendar.render();
+
+  // ✅ "일정 불러오기" 버튼 이벤트는 바깥에서 따로 작성해야 함
+  document.getElementById('load-events-btn').addEventListener('click', () => {
+    calendar.addEventSource({
+      url: '/calendarR/list-google-events',
+      method: 'GET',
+      failure: function () {
+        alert('일정 불러오기 실패');
+      }
     });
+  });
+});
   </script>
 </body>
 </html>
