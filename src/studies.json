@@ -166,5 +166,20 @@
     "location_lat": "",
     "location_lng": "",
     "action": "enroll"
+  },
+  {
+    "id": "1750453363712",
+    "writer": "4276029693",
+    "title": "ㅁㅇㄹ",
+    "description": "ㅁㅇㄹ",
+    "techstack": "",
+    "team_size": "23",
+    "progress_method": "온라인",
+    "deadline": "2025-07-04",
+    "requirements": "",
+    "thumbnail": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "enroll"
   }
 ]

@@ -198,6 +198,7 @@ router.post('/studies/delete/:id', (req, res) => {
   res.redirect('/studyR/mypage');
 });
 
+
 // 수정 폼 이동
 router.get('/studies/edit/:id', (req, res) => {
   const id = req.params.id;
@@ -255,7 +256,8 @@ router.get('/studies/:id', (req, res) => {
   res.render('studyDetail', {
     study,
     kakaoKey: process.env.KAKAO_JAVASCRIPT_KEY,
-    alreadyApplied
+    alreadyApplied,
+    currentUserId: req.cookies.currentUserId
   });
 });
 

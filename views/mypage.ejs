@@ -39,7 +39,8 @@
       <a href="/studyR/mypage?filter=pending">승인 대기</a>
     </div>
     </div>
-      <ul class="study-list"> <!--이 부분이 study의 데이터에 있는 내용을 가져오는 것이다. 그래서 거기에 미리두면 될듯! 여러 스터디들을 -->
+      <form action="/studyR/studies/bulk-delete" method="POST">
+        <ul class="study-list"> <!--이 부분이 study의 데이터에 있는 내용을 가져오는 것이다. 그래서 거기에 미리두면 될듯! 여러 스터디들을 -->
         <% studies.forEach(study=> { %>
           <li class="study-item">
             <strong>
@@ -62,6 +63,8 @@
           </li>
           <% }) %>
       </ul>
+  
+</form>
 
       <!-- 스터디 등록 -->
       <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
