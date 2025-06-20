@@ -14,21 +14,6 @@
     height: 400px; /* 높이를 명시적으로 지정 */
   }
 </style>
-<title>좌표로 주소를 얻어내기</title>
-    <style>
-    .map_wrap {position:relative;width:100%;height:350px;}
-    .title {font-weight:bold;display:block;}
-    .hAddr {position:absolute;left:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
-    #centerAddr {display:block;margin-top:2px;font-weight: normal;}
-    .bAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
-    .map-cover {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-   /* 반드시 없애야 클릭 가능 */
-  }
-</style>
 
     
 </head>
@@ -45,7 +30,7 @@
       <a href="/studyR/login">LOGOUT</a>
     </nav>
   </header>
-  <form id="studyForm" method="POST" action = "<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>" >
+  <form id="studyForm" method="POST" action = "<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>"  enctype="multipart/form-data">
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
@@ -74,89 +59,113 @@
     <textarea name="requirements" rows="4" cols="50"><%= study?.requirements || '' %></textarea><br /><br />
 
     <label>팀 소개 이미지 / 포스터 (파일 업로드):</label><br />
-    <input type="file" name="thumbnail" accept="image/*" /><br /><br />
+    <input type="file" name="thumbnail" accept="image/*" id ="thumbnailInput"/><br /><br />
   
 
     <label>스터디 장소 위치 등록 (지도 클릭):</label><br />
-    <input type="text" id="keyword" name = "place" placeholder="예: 서울역" />
+    <input type="text" id="keyword" name = "place">
+    <button type = "button" onclick="convertToAddress()">주소 확인</button>
+    
 
 
   <!-- 위도/경도 표시 및 숨겨진 필드 -->
-  <!-- <p>위도: <span id="lat"></span> | 경도: <span id="lng"></span></p>
+  <p>위도: <span id="lat"></span> | 경도: <span id="lng"></span></p>
   <input type="text" name="location_lat" id="location_lat">
-  <input type="text" name="location_lng" id="location_lng"> -->
+  <input type="text" name="location_lng" id="location_lng">
+  
 
-  <!-- <div id="map" style="width:100%; height:300px;"></div> -->
+  <div id="map" style="width:100%; height:300px;"></div>
 <button type="submit" name="action" value="enroll" id="enroll">등록하기</button>
 <button type="submit" name="action" value="upload" id= "upload" >메인업로드</button>
 </form>
-<div class="map_wrap">
-    <div id="map" style="width:100%;height:300px;position:relative;overflow:hidden;"></div>
-    <div class="hAddr">
-        <span class="title">지도중심기준 행정동 주소정보</span>
-        <span id="centerAddr"></span>
-    </div>
-</div>
-
+  
+  <!-- <p id="address_result"></p> -->
   <!-- Kakao Maps API 로드 -->
-    <!-- <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>"></script> -->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>&libraries=services"></script>
 
     <script>
-  var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = {
-        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-        level: 1 // 지도의 확대 레벨
-    };  
+      document.getElementById("upload").addEventListener("click", () => {
+  const fileInput = document.getElementById("thumbnailInput");
+  const file = fileInput.files[0];
 
-// 지도를 생성합니다    
-var map = new kakao.maps.Map(mapContainer, mapOption); 
+  if (!file) {
+    alert("파일을 선택하세요.");
+    return;
+  }
 
-// 주소-좌표 변환 객체를 생성합니다
-var geocoder = new kakao.maps.services.Geocoder();
+  const formData = new FormData();
+  formData.append("thumbnail", file);
 
-const marker = new kakao.maps.Marker(); // 클릭한 위치를 표시할 마커입니다
-const infowindow = new kakao.maps.InfoWindow({zindex:1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
-
-let currentMarker = null; // 현재 마커를 추적할 변수
-
-kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-    searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            const detailAddr = result[0].road_address
-                ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>'
-                : '';
-            const jibunAddr = '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
-
-            const content = '<div class="bAddr">' +
-                '<span class="title">법정동 주소정보</span>' + 
-                detailAddr + jibunAddr +
-                '</div>';
-
-            // 이전 마커가 있다면 지도에서 제거
-            if (currentMarker) {
-                currentMarker.setMap(null);
-            }
-
-            // 새로운 마커 생성 및 지도에 표시
-            const newMarker = new kakao.maps.Marker({
-                position: mouseEvent.latLng,
-                map: map
-            });
-
-            // 인포윈도우 표시
-            infowindow.setContent(content);
-            infowindow.open(map, newMarker);
-
-            // 현재 마커를 업데이트
-            currentMarker = newMarker;
-
-            // 주소 텍스트 필드에 반영
-            document.getElementById('keyword').value = result[0].address.address_name;
-        }
-    });
+  fetch("/uploads", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(result => {
+    console.log("서버 응답:", result);
+    alert("업로드 완료");
+  })
+  .catch(err => {
+    console.error("업로드 실패:", err);
+  });
 });
+  // 초기화
+const mapContainer = document.getElementById('map');
+const mapOption = {
+  center: new kakao.maps.LatLng(37.5665, 126.9780),
+  level: 3
+};
+const map = new kakao.maps.Map(mapContainer, mapOption);
+const places = new kakao.maps.services.Places();
+let marker = null;
+// 지도 클릭 시 마커 생성 및 정보 표시
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+  const latlng = mouseEvent.latLng;
 
+  // 기존 마커 제거 후 새 마커 생성
+  if (marker) marker.setMap(null);
+
+  marker = new kakao.maps.Marker({
+    map: map,
+    position: latlng
+  });
+
+  // 지도 중심 이동
+  map.setCenter(latlng);
+
+  // 위도, 경도 표시
+  document.getElementById('location_lat').value = latlng.getLat();
+  document.getElementById('location_lng').value = latlng.getLng();
+
+  
+  
+    
+});
+//밑의 함수: 주소로 바꾸는 것
+  function convertToAddress() {
+    const lat = parseFloat(document.getElementById('location_lat').value);
+    const lng = parseFloat(document.getElementById('location_lng').value);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      alert("올바른 위도와 경도를 입력하세요.");
+      return;
+    }
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    const coord = new kakao.maps.LatLng(lat, lng);
+
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        const address = result[0].address.address_name;
+        console.log('주소:', address);
+        // document.getElementById('address_result').innerText = `주소: ${address}`;
+        document.getElementById('keyword').value = address;
+      } else {
+        console.error('주소 변환 실패:', status);
+        // document.getElementById('address_result').innerText = `변환 실패: ${status}`;
+      }
+    });
+  }
 
   
 </script>
@@ -165,3 +174,4 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 
 </body>
 </html>
+\
