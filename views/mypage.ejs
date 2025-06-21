@@ -2,11 +2,7 @@
 <html lang="ko">
 
 <head>
-  <div class="notification-wrapper">
-  <span id="notification-bell">🔔</span>
-  <span id="notification-count" class="badge" style="display: none;"></span>
-  <div id="notification-list" class="notification-dropdown" style="display: none;"></div>
-  </div>
+
   <meta charset="UTF-8" />
   <title>SPARK - MYPAGE</title>
   <link rel="stylesheet" href="/stylesheets/myapage.css">
@@ -24,21 +20,21 @@
 </head>
 
 <body>
- <!-- ajax 구현 -->
-<script>
-  async function loadNotifications() {
-    const res = await fetch('/studyR/notifications');
-    const data = await res.json();
+  <!-- ajax 구현 -->
+  <script>
+    async function loadNotifications() {
+      const res = await fetch('/studyR/notifications');
+      const data = await res.json();
 
-    // 읽지 않은 알림 수 표시
-    const count = data.notifications.filter(n => !n.read).length;
-    const badge = document.getElementById('notification-count');
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'inline-block' : 'none';
+      // 읽지 않은 알림 수 표시
+      const count = data.notifications.filter(n => !n.read).length;
+      const badge = document.getElementById('notification-count');
+      badge.textContent = count;
+      badge.style.display = count > 0 ? 'inline-block' : 'none';
 
-    // 알림 리스트 렌더링
-    const list = document.getElementById('notification-list');
-    list.innerHTML = data.notifications.map(n => `
+      // 알림 리스트 렌더링
+      const list = document.getElementById('notification-list');
+      list.innerHTML = data.notifications.map(n => `
       <div style="padding: 8px; border-bottom: 1px solid #ddd;">
         <div>
           ${n.message}
@@ -52,34 +48,38 @@
         </div>
       </div>
     `).join('');
-  }
+    }
 
-  async function markAsRead(timestamp) {
-    await fetch(`/studyR/notifications/${timestamp}/read`, { method: 'POST' });
+    async function markAsRead(timestamp) {
+      await fetch(`/studyR/notifications/${timestamp}/read`, { method: 'POST' });
+      loadNotifications();
+    }
+
+    async function deleteNoti(timestamp) {
+      await fetch(`/studyR/notifications/${timestamp}/delete`, { method: 'POST' });
+      loadNotifications();
+    }
+
+    document.getElementById('notification-bell').addEventListener('click', () => {
+      const list = document.getElementById('notification-list');
+      list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // 최초 실행 및 주기적 갱신
     loadNotifications();
-  }
-
-  async function deleteNoti(timestamp) {
-    await fetch(`/studyR/notifications/${timestamp}/delete`, { method: 'POST' });
-    loadNotifications();
-  }
-
-  document.getElementById('notification-bell').addEventListener('click', () => {
-    const list = document.getElementById('notification-list');
-    list.style.display = list.style.display === 'none' ? 'block' : 'none';
-  });
-
-  // 최초 실행 및 주기적 갱신
-  loadNotifications();
-  setInterval(loadNotifications, 5000);
-</script>
-
+    setInterval(loadNotifications, 5000);
+  </script>
   <header class="header">
     <div class="logo">
       <img src="/favicon.png" alt="로고" class="favicon">
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
+      <div class="notification-wrapper">
+        <span id="notification-bell">🔔</span>
+        <span id="notification-count" class="badge" style="display: none;"></span>
+        <div id="notification-list" class="notification-dropdown" style="display: none;"></div>
+      </div>
       <a href="/studyR/webP">MAIN</a>
       <a href="/login">LOGOUT</a>
     </nav>
@@ -127,7 +127,6 @@
       <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
     </section>
 
-    <hr>
 
     <!-- 내가 지원한 스터디 목록 -->
     <section class="study-box">
@@ -151,36 +150,40 @@
             <% }) %>
         </ul>
 
-    <!-- 대기 중 / 불합격 -->
-    <h3>대기 중 / 불합격:</h3>
-    <ul class="study-list applied-list-pending">
-      <% pending.forEach(app => { %>
-        <li class="study-item">
-          <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
-          <strong><%= app.studyTitle %></strong><br>
-          상태: <%= app.status || "대기 중" %><br>
-        </li>
-      <% }) %>
-    </ul>
-  </form>
-</section>
-</main>
-<h1>내 구글 캘린더 보기</h1>
-<a href="/calendarR/auth/google">📅 Google 로그인</a>
-<button id="load-events-btn">📅 일정 불러오기</button>
-<div id="calendar"></div>
+        <!-- 대기 중 / 불합격 -->
+        <h3>대기 중 / 불합격:</h3>
+        <ul class="study-list applied-list-pending">
+          <% pending.forEach(app=> { %>
+            <li class="study-item">
+              <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+              <strong>
+                <%= app.studyTitle %>
+              </strong><br>
+              상태: <%= app.status || "대기 중" %><br>
+            </li>
+            <% }) %>
+        </ul>
+      </form>
+    </section>
+  </main>
+  <h1>내 구글 캘린더 보기</h1>
+  <div class="calendar-container">
+    <a href="/calendarR/auth/google" class="button">📅 Google 로그인</a>
+    <button id="load-events-btn" class="button">📅 일정 불러오기</button>
+    <div id="calendar"></div>
+  </div>
   <script>document.addEventListener('DOMContentLoaded', function () {
-  const calendarEl = document.getElementById('calendar');
+      const calendarEl = document.getElementById('calendar');
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    selectable: true,
-    locale: 'ko',
-    eventSources: [], // 처음에는 비워둠
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        locale: 'ko',
+        eventSources: [], // 처음에는 비워둠
 
-    select: async function (info) {
-      const title = prompt('일정 제목을 입력하세요');
-      if (!title) return;
+        select: async function (info) {
+          const title = prompt('일정 제목을 입력하세요');
+          if (!title) return;
 
           const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
           if (!startTime) return;
