@@ -56,6 +56,34 @@
       "status": "불합격"
     }
   ],
-  "1750402955320": [],
+  "1750267969796": [],
+  "1750319999999": [],
+  "1750267834413": [
+    {
+      "userId": "4279639219",
+      "name": "이지향",
+      "age": "23",
+      "email": "hyanglee0508@naver.com",
+      "stack": "fdf",
+      "intro": "dfdf",
+      "reason": "dfdf",
+      "github": "http://127.0.0.1:8000/studyR/apply/1750267969796/form",
+      "status": "대기중"
+    }
+  ],
+  "1750402955320": [
+    {
+      "userId": "4279639219",
+      "name": "fdf",
+      "age": "23",
+      "email": "hyanglee0508@naver.com",
+      "stack": "fdf",
+      "intro": "dfdf",
+      "reason": "dfdf",
+      "github": "http://127.0.0.1:8000/studyR/apply/1750267969796/form",
+      "status": "합격"
+    }
+  ],
+  "1750402855893": [],
   "1750401531141": []
 }

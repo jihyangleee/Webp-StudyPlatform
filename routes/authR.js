@@ -48,7 +48,12 @@ router.post('/kakao', async (req, res) => {
     // JWT 생성
     const token = jwt.sign({ kakaoId, nickname }, JWT_SECRET, { expiresIn: '1h' });
     res
-      .cookie('currentUserId', kakaoId, { httpOnly: true }) // ✅ 이 줄 추가
+      .cookie('currentUserId', kakaoId, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false, // 배포 시 true + https
+      path: '/'      // 루트 경로 전체에 쿠키 유효하게 (중요)
+    }) // ✅ 이 줄 추가
       .json({ username: nickname, token });
 
 

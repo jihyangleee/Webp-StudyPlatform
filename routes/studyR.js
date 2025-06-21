@@ -5,8 +5,11 @@ var fs = require('fs');
 var path = require('path');
 
 // 마이페이지 렌더링
+const eventsPath = path.join(__dirname, '../src/schedule.json');
+const notificationFile = path.join(__dirname, '../src/notifications.json');
 router.get('/mypage', (req, res) => {
   // const userFilePath = path.join(__dirname, '../user.json');
+  const savedEvents = JSON.parse(fs.readFileSync(eventsPath, 'utf8')); //캘린더 내용임
   const filePath = path.join(__dirname, '../src/studies.json');
   const appFile = path.join(__dirname, '../src/applications.json');
   // const users = JSON.parse(fs.readFileSync(userFilePath, 'utf8'));
@@ -23,6 +26,23 @@ router.get('/mypage', (req, res) => {
 
   const userId = req.cookies.currentUserId;  // ← 로그인한 사용자 kakaoId
   const myStudies = studies.filter(study => study.writer === userId);  // ← 내 글만 추출
+  if (!userId) return res.redirect('/login');
+
+  let notifications = {};
+  if (!fs.existsSync(notificationFile)) {
+  fs.writeFileSync(notificationFile, '{}');
+}
+  if (fs.existsSync(notificationFile)) {
+    try {
+      notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+    } catch (err) {
+      console.error('알림 파일 파싱 실패:', err);
+      notifications = {};
+    }
+  }
+
+
+  const userNoti = notifications[userId] || [];
 
   // 해당 유저가 신청한 것만
   // studies = studies.filter(study => study.applicants.includes(loginUser));
@@ -56,15 +76,20 @@ router.get('/mypage', (req, res) => {
 
   const ongoing = myApplications.filter(app => app.status === '합격');
   const pending = myApplications.filter(app => !app.status || app.status === '불합격' || app.status === '대기중');
+  //캘린더 내용 그대로 렌더링
+  const events = Array.isArray(savedEvents) ? savedEvents : [];
 
   //  합격 + 대기중/불합격 전체를 포함한 통합 배열 (일괄 삭제용)
   const allApplications = [...ongoing, ...pending];
 
   // 렌더링할 때 함께 넘기기
   res.render('mypage', {
+    userId,
+    notifications: userNoti,
     studies: filtered,
     ongoing,
     pending,
+    events,
     allApplications  
   });
 });
@@ -255,6 +280,8 @@ router.post('/studies/edit/:id', upload.single('thumbnail'), (req, res) => {
   return res.json({ redirect: action === 'upload' ? '/studyR/webP' : '/studyR/mypage' });
 });
 
+
+
 // 스터디 자세히보기
 router.get('/studies/:id', (req, res) => {
   const filePath = path.join(__dirname, '../src/studies.json');
@@ -291,7 +318,13 @@ router.get('/apply/:id/form', (req, res) => {
   const studyId = req.params.id;
   res.render('applicationForm', { studyId });
 });
+const studyFile = path.join(__dirname, '../src/studies.json');
 
+// const applyFile = path.join(__dirname, '../src/applications.json');
+// // apply뒤의 id는 studies의 id와 같다 writer가 아님
+// router.post('/apply/:id', (req, res) => {
+//   const studyId = String(req.params.id); // 이건 URL에서 /apply/:id 로 전달된 스터디 ID
+//   const userId = req.cookies.currentUserId; // 현재 로그인한 사용자 ID
 // 지원서 제출
 router.post('/apply/:id', (req, res) => {
   const studyId = String(req.params.id);
@@ -303,7 +336,7 @@ router.post('/apply/:id', (req, res) => {
   }
 
   const application = {
-    userId,
+    userId, // 지원한 사용자 ID
     name: req.body.name,
     age: req.body.age,
     email: req.body.email,
@@ -314,6 +347,7 @@ router.post('/apply/:id', (req, res) => {
     status: "대기중"
   };
 
+  // ✅ 지원서 저장
   let allApplications = {};
   if (fs.existsSync(applyFile)) {
     try {
@@ -336,10 +370,92 @@ router.post('/apply/:id', (req, res) => {
 
   try {
     fs.writeFileSync(applyFile, JSON.stringify(allApplications, null, 2));
-    return res.json({ redirect: '/studyR/mypage' });
   } catch (err) {
-    return res.status(500).json({ error: '지원서 저장 실패' });
+    console.error('지원서 저장 오류:', err);
+    return res.status(500).send('지원서 저장 중 오류 발생');
   }
+  // const notificationFile = path.join(__dirname, '../src/notifications.json');
+  // ✅ 알림 저장
+  try {
+  const studies = JSON.parse(fs.readFileSync(studyFile, 'utf8'));
+  const targetStudy = studies.find(study => study.id === studyId);
+  if (!targetStudy) return res.status(404).send('스터디를 찾을 수 없습니다.');
+  console.log('✅ targetStudy:', targetStudy);
+  const ownerId = targetStudy.writer; // 관리자의 ID
+
+  let notifications = {};
+  if (fs.existsSync(notificationFile)) {
+    notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+  }
+
+  if (!Array.isArray(notifications[ownerId])) {
+    notifications[ownerId] = [];
+  }
+
+  notifications[ownerId].push({
+    message: `스터디 '${targetStudy.title}'에 새로운 지원이 도착했습니다.`,
+    timestamp: new Date().toISOString(),
+    read: false
+  });
+
+  fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+} catch (err) {
+  console.error('알림 저장 실패:', err);
+}
+
+  res.redirect('/studyR/mypage');
+});
+
+router.get('/notifications', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.json({ notifications: [] });
+
+  let notifications = {};
+  if (fs.existsSync(notificationFile)) {
+    try {
+      notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+    } catch (err) {
+      console.error('알림 파싱 실패:', err);
+    }
+  }
+
+  const userNoti = notifications[userId] || [];
+  res.json({ notifications: userNoti });
+});
+//알림기능 읽음 처리
+router.post('/notifications/:timestamp/read', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.status(403).send('로그인이 필요합니다.');
+
+  if (!fs.existsSync(notificationFile)) return res.status(404).send('알림 파일 없음');
+  const notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+
+  if (!Array.isArray(notifications[userId])) return res.status(404).send('알림 없음');
+
+  notifications[userId] = notifications[userId].map(noti => {
+    if (noti.timestamp === req.params.timestamp) {
+      return { ...noti, read: true };
+    }
+    return noti;
+  });
+
+  fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+  res.sendStatus(200);
+});
+//알림기능 삭제 처리
+router.post('/notifications/:timestamp/delete', (req, res) => {
+  const userId = req.cookies.currentUserId;
+  if (!userId) return res.status(403).send('로그인이 필요합니다.');
+
+  if (!fs.existsSync(notificationFile)) return res.status(404).send('알림 파일 없음');
+  const notifications = JSON.parse(fs.readFileSync(notificationFile, 'utf8'));
+
+  if (!Array.isArray(notifications[userId])) return res.status(404).send('알림 없음');
+
+  notifications[userId] = notifications[userId].filter(noti => noti.timestamp !== req.params.timestamp);
+
+  fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+  res.sendStatus(200);
 });
 
 // 지원자 관리
