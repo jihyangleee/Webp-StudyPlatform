@@ -26,7 +26,7 @@ router.get('/mypage', (req, res) => {
 
   const userId = req.cookies.currentUserId;  // ← 로그인한 사용자 kakaoId
   const myStudies = studies.filter(study => study.writer === userId);  // ← 내 글만 추출
-  if (!userId) return res.redirect('/studyR/login');
+  if (!userId) return res.redirect('/login');
 
   let notifications = {};
   if (!fs.existsSync(notificationFile)) {
