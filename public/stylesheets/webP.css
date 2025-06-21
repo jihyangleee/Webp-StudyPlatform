@@ -307,3 +307,18 @@ h1 {
     border-radius: 6px;
     font-size: 14px;
 }
+
+/* 카드 안 상세 내용 나열 */
+.detail-line {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.label {
+    font-weight: bold;
+    margin-right: 4px;
+}
