@@ -36,13 +36,14 @@
   <% } %>
 
 
- <% if (study.writer === currentUserId) { %>
+ <% if (typeof currentUserId !== 'undefined' && study.writer == currentUserId) { %>
   <p><strong>이 스터디는 내가 작성한 글이에요.<br/>직접 모집 중인 스터디에는 지원할 수 없어요!</strong></p>
- <% } else if (alreadyApplied) { %>
+<% } else if (alreadyApplied) { %>
   <p><strong>지원 완료!</strong></p>
- <% } else { %>
+<% } else { %>
   <a href="/studyR/apply/<%= study.id %>/form">지원하기</a>
- <% } %>
+<% } %>
+
 
 
 
@@ -50,7 +51,7 @@
     function initMap() {
       const lat = parseFloat("<%= study.location_lat %>");
       const lng = parseFloat("<%= study.location_lng %>");
-      console.log("📍 지도 좌표:", lat, lng);
+      console.log(" 지도 좌표:", lat, lng);
 
       const container = document.getElementById("map");
       const options = {
@@ -71,7 +72,7 @@
       if (typeof kakao !== 'undefined' && kakao.maps) {
         initMap();
       } else {
-        console.error("❌ Kakao Maps SDK가 로드되지 않았습니다.");
+        console.error(" Kakao Maps SDK가 로드되지 않았습니다.");
       }
     };
   </script>
