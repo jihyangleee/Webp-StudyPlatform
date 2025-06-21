@@ -263,6 +263,7 @@ router.get('/studies/edit/:id', (req, res) => {
 });
 
 
+
 router.post('/studies/edit/:id', upload.single('thumbnail'), (req, res) => {
 
   const action = req.body.action;
@@ -277,12 +278,15 @@ router.post('/studies/edit/:id', upload.single('thumbnail'), (req, res) => {
 
   // 기존 글 가져오기
   const existing = studies[index];
+  const description = req.body.description || existing.description || '';
+  
 
   // 새로 업로드된 썸네일이 있으면 경로 갱신
   const updatedStudy = {
     ...existing,
     ...req.body,
-    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : existing.thumbnailPath
+    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : existing.thumbnailPath,
+    descriptionHtml : marked.parse(description)
   };
 
   // 업데이트

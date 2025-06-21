@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <title>SPARK - MYPAGE</title>
   <link rel="stylesheet" href="/stylesheets/myapage.css">
-  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
   <!--  FullCalendar CSS -->
   <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
 
@@ -17,6 +17,23 @@
 
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/stylesheets/calendar.css" />
+  <style>
+   
+#selected-study-info {
+  margin-top: 30px;
+  padding: 20px 25px;
+  border-radius: 12px;
+  background-color: #f5f7fa;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  color: #333;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: all 0.3s ease;
+}
+</style>
 </head>
 
 <body>
@@ -71,12 +88,14 @@
   </script>
   <header class="header">
     <div class="logo">
-      <img src="/favicon.png" alt="로고" class="favicon">
+      <img src="/images/favicon.png" alt="로고" class="favicon">
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
       <div class="notification-wrapper">
-        <span id="notification-bell">🔔</span>
+        <span id="notification-bell">
+        <img src="/images/bell.png" alt="알림" style="width: 24px; height: 24px;">
+      </span>
         <span id="notification-count" class="badge" style="display: none;"></span>
         <div id="notification-list" class="notification-dropdown" style="display: none;"></div>
       </div>
@@ -84,7 +103,9 @@
       <a href="/login">LOGOUT</a>
     </nav>
   </header>
+  
   <main class="mypage-container">
+    
     <section class="profile-box">
       <p class="profile-label">profile</p>
       <div class="profile-content">
@@ -102,9 +123,11 @@
 
 
         <a href="/studyR/mypage?filter=soon">마감 임박</a>
-        <a href="/studyR/mypage?filter=approved">합격</a>
-        <a href="/studyR/mypage?filter=pending">승인 대기</a>
+        <!-- <a href="/studyR/mypage?filter=approved">합격</a>
+        <a href="/studyR/mypage?filter=pending">승인 대기</a> -->
+        <a href="/studyR/mypage" class="filter-button">초기화</a>
       </div>
+      
       </div>
       <!-- 내가 만든 스터디 목록 -->
       <ul class="study-list my-study-list">
@@ -117,7 +140,9 @@
               <!-- 스터디 개별 삭제 버튼 (✔ 클래스 명확화) -->
               <button type="button" class="study-button btn-delete-study" data-study-id="<%= study.id %>">삭제</button>
               <a href="/studyR/studies/edit/<%= study.id %>" class="study-button edit-button">수정</a>
-              <a href="/studyR/studies/manage/<%= study.id %>" class="study-button manage-button">지원자 관리</a>
+              <a href="/studyR/studies/manage/<%= study.id %>" class="study-button manage-button">
+                👥 지원자 관리
+              </a>
             </div>
           </li>
           <% }) %>
@@ -166,12 +191,17 @@
       </form>
     </section>
   </main>
-  <h1>내 구글 캘린더 보기</h1>
+
+
   <div class="calendar-container">
-    <a href="/calendarR/auth/google" class="button">📅 Google 로그인</a>
-    <button id="load-events-btn" class="button">📅 일정 불러오기</button>
+    <a href="/calendarR/auth/google" class="button">Google 로그인</a>
+    <button id="load-events-btn" class="button">일정 불러오기</button>
     <div id="calendar"></div>
+    <div id="selected-study-info" style="margin-top: 10px; font-weight: bold;"  data-current-title=""></div>
+    
   </div>
+ 
+
   <script>
     const serverEvents = JSON.parse('<%- JSON.stringify(events || []).replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>');
   document.addEventListener('DOMContentLoaded', function () {
@@ -224,6 +254,7 @@
   });
 
   calendar.render();
+  calendarEl.style.marginTop = "-40px";
 
       // 일정 불러오기 버튼
       document.getElementById('load-events-btn').addEventListener('click', () => {
@@ -239,8 +270,38 @@
   </script>
 
   <script>
+    const studies = <%- JSON.stringify(studies) %>;
     document.addEventListener('DOMContentLoaded', () => {
+      // 스터디 제목 클릭 시 캘린더 밑에 표시
+        document.querySelectorAll('.my-study-list .study-item strong').forEach(titleEl => {
+  titleEl.style.cursor = 'pointer';
 
+  titleEl.addEventListener('click', () => {
+    const selectedTitle = titleEl.textContent.trim();
+    const infoBox = document.getElementById('selected-study-info');
+
+    // 이미 열려 있는 상태에서 같은 제목을 다시 클릭한 경우 → 닫기
+      if (infoBox.dataset.currentTitle === selectedTitle) {
+        infoBox.innerHTML = '';
+        infoBox.dataset.currentTitle = ''; // 초기화
+        return;
+      }
+
+      // studies 배열에서 해당 스터디 찾기
+      const selectedStudy = studies.find(study => study.title.trim() === selectedTitle);
+
+      if (selectedStudy) {
+        infoBox.innerHTML = `
+          <h3>선택한 스터디: ${selectedStudy.title}</h3>
+          <div>${selectedStudy.descriptionHtml}</div>
+        `;
+        infoBox.dataset.currentTitle = selectedStudy.title; // 현재 열린 제목 저장
+      } else {
+        infoBox.textContent = `스터디 정보를 찾을 수 없습니다.`;
+        infoBox.dataset.currentTitle = '';
+      }
+    });
+  });
       // 1. 스터디 개별 삭제
       document.addEventListener('click', async e => {
         const btn = e.target.closest('.btn-delete-study');
