@@ -15,7 +15,7 @@
   }
 </style>
 
-    
+    <!-- 등록과 수정 -->
 </head>
 <body>
   <header class="header">
@@ -30,7 +30,7 @@
       <a href="/studyR/login">LOGOUT</a>
     </nav>
   </header>
-  <form id="studyForm" method="POST" action = "<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>" >
+  <form id="studyForm" method="POST" action = "<%= study.id ? '/studyR/studies/edit/' + study.id : '/studyR/studies' %>"  enctype="multipart/form-data">
     <label>제목(스터디 명):</label><br />
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
@@ -59,58 +59,95 @@
     <textarea name="requirements" rows="4" cols="50"><%= study?.requirements || '' %></textarea><br /><br />
 
     <label>팀 소개 이미지 / 포스터 (파일 업로드):</label><br />
-    <input type="file" name="thumbnail" accept="image/*" /><br /><br />
+    <input type="file" name="thumbnail" accept="image/*" id ="thumbnailInput"/><br /><br />
   
 
     <label>스터디 장소 위치 등록 (지도 클릭):</label><br />
-    <input type="text" id="keyword" placeholder="예: 서울역" />
-  <button type="button" onclick="searchLocation()">검색</button>
+    <input type="text" id="keyword" name = "place">
+    <button type = "button" onclick="convertToAddress()">주소 확인</button>
+    
+
 
   <!-- 위도/경도 표시 및 숨겨진 필드 -->
-  <p>위도: <span id="lat"></span> / 경도: <span id="lng"></span></p>
-  <input type="hidden" name="location_lat" id="location_lat">
-  <input type="hidden" name="location_lng" id="location_lng">
+  <p>위도: <span id="lat"></span> | 경도: <span id="lng"></span></p>
+  <input type="text" name="location_lat" id="location_lat">
+  <input type="text" name="location_lng" id="location_lng">
+  
 
   <div id="map" style="width:100%; height:300px;"></div>
 <button type="submit" name="action" value="enroll" id="enroll">등록하기</button>
 <button type="submit" name="action" value="upload" id= "upload" >메인업로드</button>
 </form>
-
+  
+  <!-- <p id="address_result"></p> -->
   <!-- Kakao Maps API 로드 -->
-    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>"></script>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%=process.env.KAKAO_JAVASCRIPT_KEY %>&libraries=services"></script>
+
     <script>
-  const map = new kakao.maps.Map(document.getElementById('map'), {
-    center: new kakao.maps.LatLng(37.5665, 126.9780),
-    level: 3
+    
+  // 초기화
+const mapContainer = document.getElementById('map');
+const mapOption = {
+  center: new kakao.maps.LatLng(37.5665, 126.9780),
+  level: 3
+};
+const map = new kakao.maps.Map(mapContainer, mapOption);
+const places = new kakao.maps.services.Places();
+let marker = null;
+// 지도 클릭 시 마커 생성 및 정보 표시
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+  const latlng = mouseEvent.latLng;
+
+  // 기존 마커 제거 후 새 마커 생성
+  if (marker) marker.setMap(null);
+
+  marker = new kakao.maps.Marker({
+    map: map,
+    position: latlng
   });
-  const places = new kakao.maps.services.Places();
-  let marker = new kakao.maps.Marker();
 
-  function searchLocation() {
-    const keyword = document.getElementById('keyword').value.trim();
-    if (!keyword) return alert("검색어를 입력하세요");
+  // 지도 중심 이동
+  map.setCenter(latlng);
 
-    places.keywordSearch(keyword, function(result, status) {
-      console.log(result, status);
-      if (status === kakao.maps.services.Status.OK && result.length > 0) {
-        const lat = result[0].y;
-        const lng = result[0].x;
+  // 위도, 경도 표시
+  document.getElementById('location_lat').value = latlng.getLat();
+  document.getElementById('location_lng').value = latlng.getLng();
 
-        const coords = new kakao.maps.LatLng(lat, lng);
-        marker.setMap(null);
-        marker = new kakao.maps.Marker({ map, position: coords });
-        map.setCenter(coords);
+  
+  
+    
+});
+//밑의 함수: 주소로 바꾸는 것
+  function convertToAddress() {
+    const lat = parseFloat(document.getElementById('location_lat').value);
+    const lng = parseFloat(document.getElementById('location_lng').value);
 
-        document.getElementById('lat').innerText = lat;
-        document.getElementById('lng').innerText = lng;
+    if (isNaN(lat) || isNaN(lng)) {
+      alert("올바른 위도와 경도를 입력하세요.");
+      return;
+    }
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    const coord = new kakao.maps.LatLng(lat, lng);
+
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        const address = result[0].address.address_name;
+        console.log('주소:', address);
+        // document.getElementById('address_result').innerText = `주소: ${address}`;
+        document.getElementById('keyword').value = address;
       } else {
-        alert("검색 결과가 없습니다.");
+        console.error('주소 변환 실패:', status);
+        // document.getElementById('address_result').innerText = `변환 실패: ${status}`;
       }
     });
   }
+
+  
 </script>
 
   <script type="module" src="/dist/assets/main-Dg6OCUqS.js"></script>
 
 </body>
 </html>
+\

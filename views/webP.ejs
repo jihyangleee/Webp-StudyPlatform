@@ -129,7 +129,7 @@
             <!-- <button class="filter-btn">필터 설정</button>-->
             
 
-            <div class="project-list">
+            <!-- <div class="project-list">
             <% if (studies.length === 0) { %>
                 <p>조건에 맞는 스터디가 없습니다.</p>
             <% } else { %>
@@ -150,7 +150,35 @@
                     </a>
                 <% }) %>
             <% } %>
-            </div>
+            </div> -->
+            <div class="project-list">
+  <% if (studies.length === 0) { %>
+    <p>조건에 맞는 스터디가 없습니다.</p>
+  <% } else { %>
+    <% studies.forEach(study => { %>
+      <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
+        <div class="project-card">
+
+          <% if (study.thumbnailPath) { %>
+            <img src="<%= study.thumbnailPath %>" alt="썸네일" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;" />
+          <% } %>
+
+          <strong><%= study.title %></strong><br/>
+          기술:
+          <% try {
+            const techs = JSON.parse(study.techstack);
+            techs.forEach(t => { %>
+              <span><%= t.value %></span>
+          <% }) } catch(e) { %>
+            <%= study.techstack %>
+          <% } %> |
+          방식: <%= study.progress_method %> |
+          마감일: <%= study.deadline %>
+        </div>
+      </a>
+    <% }) %>
+  <% } %>
+</div>
         </section>
     </main>
 
