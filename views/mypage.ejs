@@ -160,7 +160,7 @@
 <button id="load-events-btn">📅 일정 불러오기</button>
 <div id="calendar"></div>
   <script>
-  const serverEvents = <%- JSON.stringify(events) %>;
+  const serverEvents = JSON.parse('<%= JSON.stringify(events) %>');
   document.addEventListener('DOMContentLoaded', function () {
   const calendarEl = document.getElementById('calendar');
 
