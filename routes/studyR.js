@@ -15,10 +15,10 @@ router.get('/mypage', (req, res) => {
   const now = dayjs();
   // const days = parseInt(req.query.deadlineDays, 7); // 예: 3일
 
-  const allApplications = fs.existsSync(appFile)
-  ? JSON.parse(fs.readFileSync(appFile, 'utf8'))
-  : {};
-    
+  const allApplicationsRaw = fs.existsSync(appFile)
+    ? JSON.parse(fs.readFileSync(appFile, 'utf8'))
+    : {};
+
   let studies = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   const userId = req.cookies.currentUserId;  // ← 로그인한 사용자 kakaoId
@@ -27,7 +27,7 @@ router.get('/mypage', (req, res) => {
   // 해당 유저가 신청한 것만
   // studies = studies.filter(study => study.applicants.includes(loginUser));
 
-   const filtered = myStudies.filter(study => {
+  const filtered = myStudies.filter(study => {
     if (filter === 'soon') {
       return dayjs(study.deadline).diff(now, 'day') <= 3;
     } else if (filter === 'approved') {
@@ -38,8 +38,8 @@ router.get('/mypage', (req, res) => {
     return true; // 필터 없음
   });
 
-    const myApplications = [];
-  for (const [studyId, apps] of Object.entries(allApplications)) {
+  const myApplications = [];
+  for (const [studyId, apps] of Object.entries(allApplicationsRaw)) {
     apps.forEach(app => {
       if (app.userId === userId && app.hidden !== true) {
         const study = studies.find(s => String(s.id) === String(studyId));
@@ -57,14 +57,18 @@ router.get('/mypage', (req, res) => {
   const ongoing = myApplications.filter(app => app.status === '합격');
   const pending = myApplications.filter(app => !app.status || app.status === '불합격' || app.status === '대기중');
 
+  //  합격 + 대기중/불합격 전체를 포함한 통합 배열 (일괄 삭제용)
+  const allApplications = [...ongoing, ...pending];
 
   // 렌더링할 때 함께 넘기기
   res.render('mypage', {
     studies: filtered,
     ongoing,
-    pending
+    pending,
+    allApplications  
   });
 });
+
 
 
 // 스터디 등록 페이지 렌더링
@@ -81,7 +85,9 @@ router.get('/webP', (req, res) => {
     const fileData = fs.readFileSync(filePath, 'utf8');
     studies = fileData ? JSON.parse(fileData) : [];
   }
-  res.render('webP',{studies});  // views/webP.ejs를 렌더링
+  const filtered = studies.filter(study => study.action === 'upload');
+
+  res.render('webP', { studies: filtered });  // views/webP.ejs를 렌더링
 });
 
 //필터링 기능 구현
@@ -168,17 +174,9 @@ router.post('/studies', (req, res) => {
 
   studies.push(newStudy);
   const jsonData = JSON.stringify(studies, null, 2);
-
-  fs.writeFile(filePath, jsonData, (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('저장 실패');
-    }
-     if (action ==='upload') {
-      res.redirect('/studyR/webP');
-    } else {
-      res.redirect('/studyR/mypage');
-    }
+  fs.writeFile(filePath, jsonData, err => {
+    if (err) return res.status(500).json({ error: '저장 실패' });
+    return res.json({ redirect: action === 'upload' ? '/studyR/webP' : '/studyR/mypage' });
   });
 });
 
@@ -193,11 +191,10 @@ router.post('/studies/delete/:id', (req, res) => {
     studies = fileData ? JSON.parse(fileData) : [];
   }
 
-  studies = studies.filter(study => study.id !== id);
+  studies = studies.filter(study => study.id.toString() !== id.toString());
   fs.writeFileSync(filePath, JSON.stringify(studies, null, 2), 'utf8');
-  res.redirect('/studyR/mypage');
+  return res.json({ redirect: '/studyR/mypage' });
 });
-
 
 // 수정 폼 이동
 router.get('/studies/edit/:id', (req, res) => {
@@ -210,7 +207,7 @@ router.get('/studies/edit/:id', (req, res) => {
   res.render('studyEnroll', { study });
 });
 
-// 수정 반영 저장
+// 글 수정
 router.post('/studies/edit/:id', (req, res) => {
   const action = req.body.action;
   const id = req.params.id;
@@ -218,16 +215,11 @@ router.post('/studies/edit/:id', (req, res) => {
   const fileData = fs.readFileSync(filePath, 'utf8');
   let studies = JSON.parse(fileData);
   const index = studies.findIndex(study => study.id === id);
-  if (index === -1) return res.status(404).send('글 없음');
+  if (index === -1) return res.status(404).json({ error: '글 없음' });
 
   studies[index] = { ...studies[index], ...req.body };
   fs.writeFileSync(filePath, JSON.stringify(studies, null, 2), 'utf8');
-  if (action ==='upload') {
-      res.redirect('/studyR/webP');
-    } else {
-      res.redirect('/studyR/mypage');
-    }
-
+  return res.json({ redirect: action === 'upload' ? '/studyR/webP' : '/studyR/mypage' });
 });
 
 // 스터디 자세히보기
@@ -257,25 +249,24 @@ router.get('/studies/:id', (req, res) => {
     study,
     kakaoKey: process.env.KAKAO_JAVASCRIPT_KEY,
     alreadyApplied,
-    currentUserId: req.cookies.currentUserId
+    currentUserId: userId
   });
 });
 
-
-  // 지원서 작성 페이지 라우터
-  router.get('/apply/:id/form', (req, res) => {
+// 지원서 폼 불러오기
+router.get('/apply/:id/form', (req, res) => {
   const studyId = req.params.id;
   res.render('applicationForm', { studyId });
 });
 
-const applyFile = path.join(__dirname, '../src/applications.json');
-
+// 지원서 제출
 router.post('/apply/:id', (req, res) => {
   const studyId = String(req.params.id);
   const userId = req.cookies.currentUserId;
+  const applyFile = path.join(__dirname, '../src/applications.json');
 
   if (!userId) {
-    return res.status(403).send('로그인이 필요합니다.');
+    return res.status(403).json({ error: '로그인이 필요합니다.' });
   }
 
   const application = {
@@ -295,8 +286,7 @@ router.post('/apply/:id', (req, res) => {
     try {
       allApplications = JSON.parse(fs.readFileSync(applyFile, 'utf8'));
     } catch (err) {
-      console.error('지원서 JSON 파싱 실패:', err);
-      return res.status(500).send('지원서 파일 읽기 오류');
+      return res.status(500).json({ error: '지원서 JSON 파싱 실패' });
     }
   }
 
@@ -304,14 +294,18 @@ router.post('/apply/:id', (req, res) => {
     allApplications[studyId] = [];
   }
 
+  const already = allApplications[studyId].find(app => app.userId === userId);
+  if (already) {
+    return res.status(400).json({ error: '이미 지원한 사용자입니다.' });
+  }
+
   allApplications[studyId].push(application);
 
   try {
     fs.writeFileSync(applyFile, JSON.stringify(allApplications, null, 2));
-    res.redirect('/studyR/mypage');
+    return res.json({ redirect: '/studyR/mypage' });
   } catch (err) {
-    console.error('지원서 저장 오류:', err);
-    res.status(500).send('지원서 저장 중 오류 발생');
+    return res.status(500).json({ error: '지원서 저장 실패' });
   }
 });
 
@@ -348,33 +342,8 @@ router.get('/studies/manage/:id', (req, res) => {
   });
 });
 
-// 지원 스터디 삭제
-router.post('/applications/delete/:studyId', (req, res) => {
-  const userId = req.cookies.currentUserId;
-  const studyId = req.params.studyId;
 
-  const appFile = path.join(__dirname, '../src/applications.json');
-  const allApplications = JSON.parse(fs.readFileSync(appFile, 'utf8'));
-
-  if (!Array.isArray(allApplications[studyId])) {
-    return res.redirect('/mypage');
-  }
-
-  allApplications[studyId] = allApplications[studyId].map(app => {
-    if (app.userId !== userId) return app;
-
-    if (app.status === '합격') {
-      return { ...app, hidden: true }; // 표시만 숨기기
-    } else {
-      return null; // 완전 삭제
-    }
-  }).filter(Boolean);
-
-  fs.writeFileSync(appFile, JSON.stringify(allApplications, null, 2));
-  res.redirect('/studyR/mypage');
-});
-
-// 지원자 상태 변경 (합격/불합격 처리용 POST 라우터)
+// 지원자 상태 변경
 router.post('/applications/:studyId/:userId', (req, res) => {
   const { studyId, userId } = req.params;
   const { status } = req.body;
@@ -385,10 +354,9 @@ router.post('/applications/:studyId/:userId', (req, res) => {
     : {};
 
   if (!Array.isArray(allApplications[studyId])) {
-    return res.redirect('/studyR/mypage'); // 없으면 마이페이지로 튕김
+    return res.status(404).json({ error: '해당 스터디 지원서 없음' });
   }
 
-  // 해당 지원자 status 업데이트
   allApplications[studyId] = allApplications[studyId].map(app => {
     if (app.userId === userId) {
       return { ...app, status };
@@ -397,9 +365,35 @@ router.post('/applications/:studyId/:userId', (req, res) => {
   });
 
   fs.writeFileSync(appFile, JSON.stringify(allApplications, null, 2));
-
-  res.redirect(`/studyR/studies/manage/${studyId}`); // 다시 지원자 관리 페이지로
+  return res.json({ redirect: `/studyR/studies/manage/${studyId}` });
 });
+
+
+// 지원 스터디 일괄 삭제
+router.post('/applications/delete-bulk', (req, res) => {
+  const { studyIds } = req.body;
+  const userId = req.cookies.currentUserId;
+  const filePath = path.join(__dirname, '../src/applications.json');
+
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
+
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+  let changed = false;
+  studyIds.forEach(studyId => {
+    const sid = String(studyId);
+    if (data[sid]) {
+      const originalLength = data[sid].length;
+      data[sid] = data[sid].filter(app => app.userId !== userId);
+      if (data[sid].length < originalLength) changed = true;
+    }
+  });
+
+  if (!changed) return res.sendStatus(404);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  res.sendStatus(200);
+});
+
 
 
 

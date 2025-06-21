@@ -151,35 +151,5 @@
     "location_lat": "37.554722",
     "location_lng": "126.970833",
     "action": "upload"
-  },
-  {
-    "id": "1750323349209",
-    "writer": "4276029693",
-    "title": "테스트용",
-    "description": "테스트용입니다",
-    "techstack": "[{\"value\":\"제발\"}]",
-    "team_size": "3",
-    "progress_method": "오프라인",
-    "deadline": "2025-06-25",
-    "requirements": "제발 되라",
-    "thumbnail": "",
-    "location_lat": "",
-    "location_lng": "",
-    "action": "enroll"
-  },
-  {
-    "id": "1750453363712",
-    "writer": "4276029693",
-    "title": "ㅁㅇㄹ",
-    "description": "ㅁㅇㄹ",
-    "techstack": "",
-    "team_size": "23",
-    "progress_method": "온라인",
-    "deadline": "2025-07-04",
-    "requirements": "",
-    "thumbnail": "",
-    "location_lat": "",
-    "location_lng": "",
-    "action": "enroll"
   }
 ]

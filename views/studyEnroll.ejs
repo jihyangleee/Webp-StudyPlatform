@@ -35,8 +35,12 @@
     <input type="text" name="title" value="<%= study?.title || '' %>" required /><br /><br />
 
     <label>설명 (마크다운):</label><br />
-    <div id="editor"><%= study?.description || '' %></div>
-    <input type="hidden" name="description" id="description" /><br /><br />
+    <!-- 마크다운 에디터 렌더용 div -->
+    <textarea id="initial-description" style="display:none;"><%= study?.description || '' %></textarea>
+    <div id="editor"></div>
+    <input type="hidden" name="description" id="description">
+
+
 
     <label>기술스택 (태그 입력):</label><br />
     <input name="techstack" id="techstack" placeholder="기술스택 입력" value="<%= study?.techstack || '' %>" /><br /><br />
@@ -110,7 +114,47 @@
   }
 </script>
 
-  <script type="module" src="/dist/assets/main-Dg6OCUqS.js"></script>
+<script type="module" src="/dist/assets/main-C1G1Y4OQ.js"></script>
+<link rel="stylesheet" href="/dist/assets/main-Bl-Z3xrU.css" />
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('studyForm');
+    const descriptionInput = document.getElementById('description');
+
+    if (!form || !descriptionInput) return;
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      descriptionInput.value = window.editorInstance?.getMarkdown?.() || '';
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const clickedButton = document.activeElement;
+      data.action = clickedButton?.value;
+
+      const url = form.getAttribute('action');
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (result.redirect) {
+        window.location.href = result.redirect;
+      } else {
+        alert(result.error || '저장 실패');
+      }
+    });
+  });
+</script>
+
+
 
 </body>
 </html>
