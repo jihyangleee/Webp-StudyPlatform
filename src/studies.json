@@ -178,5 +178,39 @@
     "location_lng": "",
     "action": "upload",
     "thumbnailPath": null
+  },
+  {
+    "id": "1750507219434",
+    "writer": "4279639219",
+    "title": "웹개발",
+    "description": "# 모집 요강",
+    "techstack": "[{\"value\":\"react\"}]",
+    "team_size": "2",
+    "progress_method": "오프라인",
+    "deadline": "2025-06-25",
+    "requirements": "dfdf",
+    "thumbnail": {},
+    "place": "서울 서대문구 천연동 48-2",
+    "location_lat": "37.56888322821823",
+    "location_lng": "126.96178581277087",
+    "action": "upload",
+    "thumbnailPath": null
+  },
+  {
+    "id": "1750507565856",
+    "writer": "4279639219",
+    "title": "webpro",
+    "description": "# 모집합니다",
+    "techstack": "[{\"value\":\"react\"}]",
+    "team_size": "2",
+    "progress_method": "온라인",
+    "deadline": "2025-06-28",
+    "requirements": "아무나~",
+    "thumbnail": {},
+    "place": "서울 중구 태평로2가 43",
+    "location_lat": "37.564346223232036",
+    "location_lng": "126.97736263622558",
+    "action": "upload",
+    "thumbnailPath": null
   }
 ]

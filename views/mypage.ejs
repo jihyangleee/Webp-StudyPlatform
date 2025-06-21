@@ -172,46 +172,58 @@
     <button id="load-events-btn" class="button">📅 일정 불러오기</button>
     <div id="calendar"></div>
   </div>
-  <script>document.addEventListener('DOMContentLoaded', function () {
-      const calendarEl = document.getElementById('calendar');
+  <script>
+    const serverEvents = JSON.parse('<%- JSON.stringify(events || []).replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>');
+  document.addEventListener('DOMContentLoaded', function () {
+  const calendarEl = document.getElementById('calendar');
 
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        selectable: true,
-        locale: 'ko',
-        eventSources: [], // 처음에는 비워둠
-
-        select: async function (info) {
-          const title = prompt('일정 제목을 입력하세요');
-          if (!title) return;
-
-          const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
-          if (!startTime) return;
-
-          const endTime = prompt('종료 시간 (예: 10:00)', '10:00');
-          if (!endTime) return;
-
-          const start = new Date(info.dateStr + 'T' + startTime + ':00+09:00').toISOString();
-          const end = new Date(info.dateStr + 'T' + endTime + ':00+09:00').toISOString();
-
-          calendar.addEvent({
-            title,
-            start,
-            end,
-            allDay: false
-          });
-
-          fetch('/calendarR/add-google-event', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, start, end })
-          })
-            .then(res => res.text())
-            .then(msg => alert(msg));
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    selectable: true,
+    locale: 'ko',
+    eventSources: [
+        {
+          events: serverEvents
         }
+      ], // 처음에는 비워둠
+
+    select: async function (info) {
+      const title = prompt('일정 제목을 입력하세요');
+      if (!title) return;
+
+      const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
+      if (!startTime) return;
+
+      const endTime = prompt('종료 시간 (예: 10:00)', '10:00');
+      if (!endTime) return;
+
+      const startDate = new Date(info.startStr + 'T' + startTime + ':00+09:00');
+      const endDate = new Date(info.startStr + 'T' + endTime + ':00+09:00');
+      if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+
+      const start = startDate.toISOString();
+      const end = endDate.toISOString();
+
+      // UI에 바로 표시
+      calendar.addEvent({
+        title: title,
+        start: start,
+        end: end,
+        allDay: false
       });
 
-      calendar.render();
+      // 서버로 전송
+      await fetch('/calendarR/add-google-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, start, end })
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg));
+    }
+  });
+
+  calendar.render();
 
       // 일정 불러오기 버튼
       document.getElementById('load-events-btn').addEventListener('click', () => {
