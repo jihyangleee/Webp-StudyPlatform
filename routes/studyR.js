@@ -107,15 +107,17 @@ router.get('/webP', (req, res) => {
   let studies = [];
 
   if (fs.existsSync(filePath)) {
-    const fileData = fs.readFileSync(filePath, 'utf8');
-    studies = fileData ? JSON.parse(fileData) : [];
+    const raw = fs.readFileSync(filePath, 'utf8');
+    try {
+      studies = JSON.parse(raw); // ✅ 할당 필요
+    } catch (err) {
+      console.error('파일이 JSON 형식이 아닙니다:', raw.slice(0, 100));
+    }
   }
 
   const filtered = studies.filter(study => study.action === 'upload');
-
-  res.render('webP', { studies: filtered });  // views/webP.ejs를 렌더링
+  res.render('webP', { studies: filtered });
 });
-
 //필터링 기능 구현
 router.get('/filter', (req, res) => {
   const { techstack, progress_method, deadline } = req.query;
@@ -201,7 +203,7 @@ const storage = multer.diskStorage({
     cb(null, `${baseName}-${uniqueSuffix}${ext}`);
   }
 });
-
+const marked = require('marked');
 const upload = multer({ storage });
 router.post('/studies', upload.single('thumbnail'), (req, res) => {
   const data = req.body;
@@ -214,13 +216,15 @@ router.post('/studies', upload.single('thumbnail'), (req, res) => {
     const fileData = fs.readFileSync(filePath, 'utf8');
     studies = fileData ? JSON.parse(fileData) : [];
   }
-
+  // study.descriptionHtml = marked.parse(study.description || '');
   const newStudy = {
     id: Date.now().toString(),
     writer: userId || 'anonymous',
     ...data,
-    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : null // ← 파일 경로 저장
+    thumbnailPath: req.file ? `/uploads/${req.file.filename}` : null,// ← 파일 경로 저장
+    descriptionHtml: marked.parse(data.description || '')
   };
+
 
   studies.push(newStudy);
   const jsonData = JSON.stringify(studies, null, 2);

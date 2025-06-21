@@ -18,29 +18,25 @@ router.get('/login', (req, res) => {
   res.render('login', { kakaoKey: process.env.KAKAO_JAVASCRIPT_KEY });
 });
 
-// POST /auth/kakao 요청 처리
 router.post('/kakao', async (req, res) => {
   const kakaoToken = req.body.token;
 
   try {
+    // 1. 카카오에서 사용자 정보 가져오기
     const kakaoUser = await axios.get('https://kapi.kakao.com/v2/user/me', {
       headers: { Authorization: `Bearer ${kakaoToken}` }
     });
 
-    console.log(kakaoUser.data);
-
-    const kakaoId = kakaoUser.data.id
+    const kakaoId = kakaoUser.data.id;
     const nickname = kakaoUser.data.kakao_account.profile.nickname;
 
-
-    // user.json 읽기
+    // 2. user.json에 사용자 저장
     let users = [];
     if (fs.existsSync(userFile)) {
       const data = fs.readFileSync(userFile);
       users = JSON.parse(data);
     }
 
-    // 신규 사용자인지 확인 후 추가
     let user = users.find(u => u.kakaoId === kakaoId);
     if (!user) {
       user = { kakaoId, nickname };
@@ -48,22 +44,21 @@ router.post('/kakao', async (req, res) => {
       fs.writeFileSync(userFile, JSON.stringify(users, null, 2));
     }
 
-    // JWT 생성
-    const token = jwt.sign({ kakaoId, nickname }, JWT_SECRET, { expiresIn: '1h' });
+    // 3. 카카오userid을 쿠키에 저장 (JWT 대신)
     res
       .cookie('currentUserId', kakaoId, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false, // 배포 시 true + https
-      path: '/'      // 루트 경로 전체에 쿠키 유효하게 (중요)
-    }) // ✅ 이 줄 추가
-      .json({ username: nickname, token });
-
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: false, // 배포 시 true + HTTPS
+        path: '/',
+        maxAge: 1000 * 60 * 60 // 1시간
+      })
+      .json({ username: nickname });
 
   } catch (err) {
     console.error('카카오 API 오류:', err.message);
     res.status(400).json({ message: '카카오 인증 실패' });
   }
-}); //access token을 서버에 보내면 이를 통해 jwt 발급 이것을 쿠키나 로컬 스토리지에 저장
+});
 
 module.exports = router;

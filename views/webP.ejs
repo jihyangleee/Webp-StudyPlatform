@@ -94,6 +94,45 @@
                     </form>
                 </div>
             </div>
+<<<<<<< HEAD
+=======
+        </div>
+        <!-- 자동검색기능 -->
+             <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
+            <div id="autocompleteList" class="autocomplete-list"></div>
+            <button id="searchBtn">검색</button>
+
+        <!-- 모달창 -->
+        <div id="filterModal" class="modal hidden">
+            <div class="modal-content">
+                <form id="filterForm" action="/studyR/filter" method="get">
+                    <h3>필터 설정</h3>
+
+                    <div class="filter-section">
+                        <label>진행 방식</label><br />
+                        <label><input type="checkbox" name="progress_method" value="온라인"> 온라인</label>
+                        <label><input type="checkbox" name="progress_method" value="오프라인"> 오프라인</label>
+                    </div>
+
+                    <div class="filter-section">
+                        <label>마감 조건</label><br />
+                        <label><input type="radio" name="deadline" value="future" checked> 마감 전</label>
+                        <label><input type="radio" name="deadline" value="past"> 마감 후</label>
+                    </div>
+
+                    <div class="filter-section">
+                        <label>기술 스택</label><br />
+                        <input type="text" name="techstack" placeholder="예: React, Node.js">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="button" id="closeFilterModal">취소</button>
+                        <button type="submit">적용</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+>>>>>>> ec993a379a6933b07e266c72822683340c84efa0
 
 
 
@@ -138,6 +177,7 @@
             </script>
 
 
+<<<<<<< HEAD
             <!-- <button class="filter-btn">필터 설정</button>-->
 
 
@@ -170,6 +210,16 @@
                         <% studies.forEach(study=> { %>
                             <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
                                 <div class="project-card">
+=======
+            <!-- 화면에 안나타난 이유 라우터에서 데이터를 받을때 studies값에 아무것도 안넣음 -->
+        <div class="project-list">
+            <% if (studies.length===0) { %>
+                <p>조건에 맞는 스터디가 없습니다.</p>
+                <% } else { %>
+                    <% studies.forEach(study=> { %>
+                        <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
+                            <div class="project-card">
+>>>>>>> ec993a379a6933b07e266c72822683340c84efa0
 
                                     <% if (study.thumbnailPath) { %>
                                         <img src="<%= study.thumbnailPath %>" alt="썸네일"
