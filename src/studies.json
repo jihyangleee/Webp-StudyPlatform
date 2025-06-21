@@ -144,5 +144,39 @@
     "location_lng": "126.97582203761857",
     "action": "upload",
     "thumbnailPath": "/uploads/dd-1750422243266.png"
+  },
+  {
+    "id": "1750486499826",
+    "writer": "anonymous",
+    "title": "사진 예시",
+    "description": "ㄷㄱㄷㄱ",
+    "techstack": "[{\"value\":\"ㄷㄱㄷㄱ\"}]",
+    "team_size": "2",
+    "progress_method": "온라인",
+    "deadline": "2025-06-28",
+    "requirements": "3434",
+    "thumbnail": {},
+    "place": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "enroll",
+    "thumbnailPath": null
+  },
+  {
+    "id": "1750486545053",
+    "writer": "anonymous",
+    "title": "사진예시",
+    "description": "234",
+    "techstack": "[{\"value\":\"234\"}]",
+    "team_size": "3",
+    "progress_method": "온라인",
+    "deadline": "2025-06-25",
+    "requirements": "234",
+    "thumbnail": {},
+    "place": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "upload",
+    "thumbnailPath": null
   }
 ]

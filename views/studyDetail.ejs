@@ -1,51 +1,81 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
-  <title><%= study.title %> - 스터디 상세</title>
+  <title>
+    <%= study.title %> - 스터디 상세
+  </title>
+  <link rel="stylesheet" href="/stylesheets/studyDetail.css" />
 
   <!--  Kakao Maps API (환경변수로 전달된 키 사용) -->
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=<%= kakaoKey %>"></script>
 </head>
+
 <body>
-  <h2><%= study.title %></h2>
+  <div class="container">
+    <div class="sidebar">
+      <img src="/favicon.png" alt="logo" class="favicon" />
+    </div>
 
-  <p><strong>설명:</strong> <%= study.description %></p>
+    <div class="content">
+      <div class="form-wrapper">
+        <h2>
+          <%= study.title %>
+        </h2>
 
-  <p><strong>기술 스택:</strong>
-    <% 
-      let stack = '';
-      try {
-        if (typeof study.techstack === 'string') {
-          stack = JSON.parse(study.techstack).map(t => t.value).join(', ');
-        } else if (Array.isArray(study.techstack)) {
-          stack = study.techstack.map(t => t.value).join(', ');
-        }
-      } catch (e) { stack = '(파싱 실패)'; }
-    %>
-    <%= stack %>
-  </p>
+        <div class="info-label">설명</div>
+        <div class="info-value">
+          <%= study.description %>
+        </div>
 
-  <p><strong>팀원 수:</strong> <%= study.team_size %></p>
-  <p><strong>진행 방식:</strong> <%= study.progress_method %></p>
-  <p><strong>마감일:</strong> <%= study.deadline %></p>
-  <p><strong>요구사항:</strong> <%= study.requirements %></p>
-  <% if (study.location_lat && study.location_lng) { %>
-    <p><strong>모임장소:</strong></p>
-    <div id="map" style="width: 100%; height: 350px; margin-top: 1rem;"></div>
-  <% } %>
+        <div class="info-label">기술 스택:</div>
+        <div class="info-value">
+          <% let stack='' ; try { if (typeof study.techstack==='string' ) { stack=JSON.parse(study.techstack).map(t=>
+            t.value).join(', ');
+            } else if (Array.isArray(study.techstack)) {
+            stack = study.techstack.map(t => t.value).join(', ');
+            }
+            } catch (e) { stack = '(파싱 실패)'; }
+            %>
+            <%= stack %>
+        </div>
 
+        <div class="info-label">팀원 수</div>
+        <div class="info-value">
+          <%= study.team_size %>
+        </div>
 
- <% if (typeof currentUserId !== 'undefined' && study.writer == currentUserId) { %>
-  <p><strong>이 스터디는 내가 작성한 글이에요.<br/>직접 모집 중인 스터디에는 지원할 수 없어요!</strong></p>
-<% } else if (alreadyApplied) { %>
-  <p><strong>지원 완료!</strong></p>
-<% } else { %>
-  <a href="/studyR/apply/<%= study.id %>/form">지원하기</a>
-<% } %>
+        <div class="info-label">진행 방식</div>
+        <div class="info-value">
+          <%= study.progress_method %>
+        </div>
 
+        <div class="info-label">마감일</div>
+        <div class="info-value">
+          <%= study.deadline %>
+        </div>
 
+        <div class="info-label">요구사항</div>
+        <div class="info-value">
+          <%= study.requirements %>
+        </div>
 
+        <% if (study.location_lat && study.location_lng) { %>
+          <div class="info-label">모임 장소</div>
+          <div id="map" style="width: 100%; height: 350px; margin-top: 1rem;"></div>
+          <% } %>
+
+            <% if (typeof currentUserId !=='undefined' && study.writer==currentUserId) { %>
+              <p><strong>이 스터디는 내가 작성한 글이에요. 직접 모집 중인 스터디에는 지원할 수 없어요!</strong></p>
+              <% } else if (alreadyApplied) { %>
+                <p><strong>지원 완료!</strong></p>
+                <% } else { %>
+                  <a href="/studyR/apply/<%= study.id %>/form" class="apply-btn">지원하기</a>
+                  <% } %>
+      </div>
+    </div>
+  </div>
 
   <script>
     function initMap() {
@@ -79,7 +109,5 @@
 
 
 </body>
+
 </html>
-
-
-

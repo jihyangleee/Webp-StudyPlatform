@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <title>SPARK - MYPAGE</title>
@@ -12,7 +13,11 @@
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.global.min.js'></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/stylesheets/calendar.css" />
 </head>
+
 <body>
   <header class="header">
     <div class="logo">
@@ -39,207 +44,224 @@
     <section class="study-box">
       <p class="study-label">MY STUDY</p>
       <div class="filter-buttons">
-      
-          
-      <a href="/studyR/mypage?filter=soon">마감 임박</a>
-      <a href="/studyR/mypage?filter=approved">합격</a>
-      <a href="/studyR/mypage?filter=pending">승인 대기</a>
-    </div>
-    </div>
-      <!-- 내가 만든 스터디 목록 -->
-<ul class="study-list my-study-list">
-  <% studies.forEach(study => { %>
-    <li class="study-item">
-      <strong><%= study.title %></strong><br>
-      <div class="button-group">
-        <!-- 스터디 개별 삭제 버튼 (✔ 클래스 명확화) -->
-        <button type="button" class="study-button btn-delete-study" data-study-id="<%= study.id %>">삭제</button>
-        <a href="/studyR/studies/edit/<%= study.id %>" class="study-button edit-button">수정</a>
-        <a href="/studyR/studies/manage/<%= study.id %>" class="study-button manage-button">지원자 관리</a>
+
+
+        <a href="/studyR/mypage?filter=soon">마감 임박</a>
+        <a href="/studyR/mypage?filter=approved">합격</a>
+        <a href="/studyR/mypage?filter=pending">승인 대기</a>
       </div>
-    </li>
-  <% }) %>
-</ul>
+      </div>
+      <!-- 내가 만든 스터디 목록 -->
+      <ul class="study-list my-study-list">
+        <% studies.forEach(study=> { %>
+          <li class="study-item">
+            <strong>
+              <%= study.title %>
+            </strong><br>
+            <div class="button-group">
+              <!-- 스터디 개별 삭제 버튼 (✔ 클래스 명확화) -->
+              <button type="button" class="study-button btn-delete-study" data-study-id="<%= study.id %>">삭제</button>
+              <a href="/studyR/studies/edit/<%= study.id %>" class="study-button edit-button">수정</a>
+              <a href="/studyR/studies/manage/<%= study.id %>" class="study-button manage-button">지원자 관리</a>
+            </div>
+          </li>
+          <% }) %>
+      </ul>
 
-<!-- 스터디 등록 버튼 -->
-<a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
-</section>
+      <!-- 스터디 등록 버튼 -->
+      <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
+    </section>
 
-<hr>
+    <hr>
 
-<!-- 내가 지원한 스터디 목록 -->
-<section class="study-box">
-  <form id="form-delete-applications">
-    <!-- 지원서 선택 삭제 -->
-    <button type="submit" class="study-button btn-delete-selected-applications">선택 삭제</button>
+    <!-- 내가 지원한 스터디 목록 -->
+    <section class="study-box">
+      <form id="form-delete-applications">
+        <!-- 지원서 선택 삭제 -->
+        <button type="submit" class="study-button btn-delete-selected-applications">선택 삭제</button>
 
-    <p class="study-label">지원한 스터디 목록</p>
+        <p class="study-label">지원한 스터디 목록</p>
 
-    <!-- 합격 -->
-    <h3>합격:</h3>
-    <ul class="study-list applied-list-pass">
-      <% ongoing.forEach(app => { %>
-        <li class="study-item">
-          <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
-          <strong><%= app.studyTitle %></strong><br>
-          상태: <%= app.status %><br>
-        </li>
-      <% }) %>
-    </ul>
+        <!-- 합격 -->
+        <h3>합격:</h3>
+        <ul class="study-list applied-list-pass">
+          <% ongoing.forEach(app=> { %>
+            <li class="study-item">
+              <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+              <strong>
+                <%= app.studyTitle %>
+              </strong><br>
+              상태: <%= app.status %><br>
+            </li>
+            <% }) %>
+        </ul>
 
-    <!-- 대기 중 / 불합격 -->
-    <h3>대기 중 / 불합격:</h3>
-    <ul class="study-list applied-list-pending">
-      <% pending.forEach(app => { %>
-        <li class="study-item">
-          <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
-          <strong><%= app.studyTitle %></strong><br>
-          상태: <%= app.status || "대기 중" %><br>
-        </li>
-      <% }) %>
-    </ul>
-  </form>
-</section>
-</main>
-<h1>내 구글 캘린더 보기</h1>
-<a href="/calendarR/auth/google">📅 Google 로그인</a>
-<button id="load-events-btn">📅 일정 불러오기</button>
-<div id="calendar"></div>
-  <script>document.addEventListener('DOMContentLoaded', function () {
-  const calendarEl = document.getElementById('calendar');
+        <!-- 대기 중 / 불합격 -->
+        <h3>대기 중 / 불합격:</h3>
+        <ul class="study-list applied-list-pending">
+          <% pending.forEach(app=> { %>
+            <li class="study-item">
+              <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+              <strong>
+                <%= app.studyTitle %>
+              </strong><br>
+              상태: <%= app.status || "대기 중" %><br>
+            </li>
+            <% }) %>
+        </ul>
+      </form>
+    </section>
+  </main>
+  <main style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
+    <h1 style="text-align: center; color: #37474F;">📅스터디 캘린더</h1>
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    selectable: true,
-    locale: 'ko',
-    eventSources: [], // 처음에는 비워둠
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <a href="/calendarR/auth/google" class="button" style="margin-right: 10px;">🔐 Google 로그인</a>
+      <button id="load-events-btn" class="button">📂 일정 불러오기</button>
+    </div>
 
-    select: async function (info) {
-      const title = prompt('일정 제목을 입력하세요');
-      if (!title) return;
+    <div id="calendar"></div>
+  </main>
 
-      const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
-      if (!startTime) return;
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-      const endTime = prompt('종료 시간 (예: 10:00)', '10:00');
-      if (!endTime) return;
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
 
-      const startDate = new Date(info.startStr + 'T' + startTime + ':00+09:00');
-      const endDate = new Date(info.startStr + 'T' + endTime + ':00+09:00');
-      if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        locale: 'ko',
 
-      const start = startDate.toISOString();
-      const end = endDate.toISOString();
+        // 날짜 클릭 → 일정 등록
+        dateClick: function (info) {
+          document.querySelectorAll('.fc-daygrid-day.selected').forEach(day => {
+            day.classList.remove('selected');
+          });
+          info.dayEl.classList.add('selected');
 
-      // UI에 바로 표시
-      calendar.addEvent({
-        title: title,
-        start: start,
-        end: end,
-        allDay: false
+          const title = prompt('일정 제목을 입력하세요');
+          if (!title) return;
+
+          const startTime = prompt('시작 시간 (예: 09:00)', '09:00');
+          if (!startTime) return;
+
+          const endTime = prompt('종료 시간 (예: 10:00)', '10:00');
+          if (!endTime) return;
+
+          const start = new Date(info.dateStr + 'T' + startTime + ':00+09:00').toISOString();
+          const end = new Date(info.dateStr + 'T' + endTime + ':00+09:00').toISOString();
+
+          calendar.addEvent({
+            title,
+            start,
+            end,
+            allDay: false
+          });
+
+          fetch('/calendarR/add-google-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, start, end })
+          })
+            .then(res => res.text())
+            .then(msg => alert(msg));
+        }
       });
 
-      // 서버로 전송
-      await fetch('/calendarR/add-google-event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, start, end })
-      })
-      .then(res => res.text())
-      .then(msg => alert(msg));
-    }
-  });
+      calendar.render();
 
-  calendar.render();
-
-  // ✅ "일정 불러오기" 버튼 이벤트는 바깥에서 따로 작성해야 함
-  document.getElementById('load-events-btn').addEventListener('click', () => {
-    calendar.addEventSource({
-      url: '/calendarR/list-google-events',
-      method: 'GET',
-      failure: function () {
-        alert('일정 불러오기 실패');
-      }
+      // 일정 불러오기 버튼
+      document.getElementById('load-events-btn').addEventListener('click', () => {
+        calendar.addEventSource({
+          url: '/calendarR/list-google-events',
+          method: 'GET',
+          failure: function () {
+            alert('일정 불러오기 실패');
+          }
+        });
+      });
     });
-  });
-});
   </script>
 
   <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-  // 1. 스터디 개별 삭제
-  document.addEventListener('click', async e => {
-    const btn = e.target.closest('.btn-delete-study');
-    if (!btn) return;
+      // 1. 스터디 개별 삭제
+      document.addEventListener('click', async e => {
+        const btn = e.target.closest('.btn-delete-study');
+        if (!btn) return;
 
-    const id = btn.dataset.studyId;
-    if (!id) {
-      alert('스터디 ID가 없습니다.');
-      return;
-    }
+        const id = btn.dataset.studyId;
+        if (!id) {
+          alert('스터디 ID가 없습니다.');
+          return;
+        }
 
-    try {
-      const res = await fetch(`/studyR/studies/delete/${id}`, {
-        method: 'POST'
+        try {
+          const res = await fetch(`/studyR/studies/delete/${id}`, {
+            method: 'POST'
+          });
+
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text);
+          }
+
+          const result = await res.json();
+          if (result.redirect) {
+            location.href = result.redirect;
+          } else {
+            alert('삭제 실패');
+          }
+        } catch (err) {
+          console.error('스터디 삭제 실패:', err);
+          alert('삭제 중 오류 발생');
+        }
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
+      // 2. 지원서 선택 삭제
+      const form = document.getElementById('form-delete-applications');
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
 
-      const result = await res.json();
-      if (result.redirect) {
-        location.href = result.redirect;
-      } else {
-        alert('삭제 실패');
-      }
-    } catch (err) {
-      console.error('스터디 삭제 실패:', err);
-      alert('삭제 중 오류 발생');
-    }
-  });
+        const checked = [...document.querySelectorAll('.checkbox-delete-application:checked')];
+        if (checked.length === 0) return alert('삭제할 항목을 선택하세요.');
+        if (!confirm('선택한 항목을 삭제하시겠습니까?')) return;
 
-  // 2. 지원서 선택 삭제
-  const form = document.getElementById('form-delete-applications');
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
+        const studyIds = checked.map(cb => cb.dataset.studyId);
 
-    const checked = [...document.querySelectorAll('.checkbox-delete-application:checked')];
-    if (checked.length === 0) return alert('삭제할 항목을 선택하세요.');
-    if (!confirm('선택한 항목을 삭제하시겠습니까?')) return;
+        try {
+          const res = await fetch('/studyR/applications/delete-bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studyIds })
+          });
 
-    const studyIds = checked.map(cb => cb.dataset.studyId);
-
-    try {
-      const res = await fetch('/studyR/applications/delete-bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studyIds })
+          if (res.ok) {
+            location.reload();
+          } else {
+            alert('지원서 삭제 실패');
+          }
+        } catch (err) {
+          console.error('지원서 삭제 실패:', err);
+          alert('삭제 중 오류 발생');
+        }
       });
 
-      if (res.ok) {
-        location.reload();
-      } else {
-        alert('지원서 삭제 실패');
-      }
-    } catch (err) {
-      console.error('지원서 삭제 실패:', err);
-      alert('삭제 중 오류 발생');
-    }
-  });
+      // 3. 새로운 스터디 등록 페이지로 이동
+      document.getElementById('toStudyWrite').addEventListener('click', () => {
+        window.location.href = '/studyR/studies/new';
+      });
 
-  // 3. 새로운 스터디 등록 페이지로 이동
-  document.getElementById('toStudyWrite').addEventListener('click', () => {
-    window.location.href = '/studyR/studies/new';
-  });
-
-});
-</script>
+    });
+  </script>
 
 
 
 
 </body>
+
 </html>
