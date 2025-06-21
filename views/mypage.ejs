@@ -5,10 +5,10 @@
   <title>SPARK - MYPAGE</title>
   <link rel="stylesheet" href="/stylesheets/myapage.css">
   <link rel="icon" href="/favicon.png" type="image/png">
-  <!-- ✅ FullCalendar CSS -->
+  <!--  FullCalendar CSS -->
   <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
 
-  <!-- ✅ FullCalendar JS (global 버전) -->
+  <!--  FullCalendar JS (global 버전) -->
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.global.min.js'></script>
@@ -46,58 +46,59 @@
       <a href="/studyR/mypage?filter=pending">승인 대기</a>
     </div>
     </div>
-      <ul class="study-list"> <!--이 부분이 study의 데이터에 있는 내용을 가져오는 것이다. 그래서 거기에 미리두면 될듯! 여러 스터디들을 -->
-        <% studies.forEach(study=> { %>
-          <li class="study-item">
-            <strong>
-              <%= study.title %>
-            </strong><br>
-            <div class="button-group">
-              <!-- <form action="/studyR/studies/upload/<%= study.id %>" method="GET" style="display:inline;">
-                <button type="submit" class="study-button delete-button">업로드</button> --> <!--업로드버튼을 마이페이지에서 만들지 아니면 등록페이지에서 만들지 고민..-->
-              <form action="/studyR/studies/delete/<%= study.id %>" method="POST" style="display:inline;">
-                <button type="submit" class="study-button delete-button">삭제</button>
-              </form>
-              <form action="/studyR/studies/edit/<%= study.id %>" method="GET" style="display:inline;">
-                <button type="submit" class="study-button edit-button">수정</button>
-              </form>
-              <form action="/studyR/studies/manage/<%= study.id %>" method="GET" style="display:inline;">
-                <button type="submit" class="study-button manage-button">지원자 관리</button>
-              </form>
+      <!-- 내가 만든 스터디 목록 -->
+<ul class="study-list my-study-list">
+  <% studies.forEach(study => { %>
+    <li class="study-item">
+      <strong><%= study.title %></strong><br>
+      <div class="button-group">
+        <!-- 스터디 개별 삭제 버튼 (✔ 클래스 명확화) -->
+        <button type="button" class="study-button btn-delete-study" data-study-id="<%= study.id %>">삭제</button>
+        <a href="/studyR/studies/edit/<%= study.id %>" class="study-button edit-button">수정</a>
+        <a href="/studyR/studies/manage/<%= study.id %>" class="study-button manage-button">지원자 관리</a>
+      </div>
+    </li>
+  <% }) %>
+</ul>
 
-            </div>
-          </li>
-          <% }) %>
-      </ul>
+<!-- 스터디 등록 버튼 -->
+<a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
+</section>
 
-      <!-- 스터디 등록 -->
-      <a class="new-study-btn" id="toStudyWrite">새로운 스터디 만들기</a>
-    </section>
+<hr>
 
-    <hr>
+<!-- 내가 지원한 스터디 목록 -->
 <section class="study-box">
-  <p class="study-label"> 수강 중인 스터디</p>
-  <ul class="study-list">
-    <% ongoing.forEach(app => { %>
-      <li class="study-item">
-        <strong><%= app.studyTitle %></strong><br>
-        상태: <%= app.status %>
-      </li>
-    <% }) %>
-  </ul>
+  <form id="form-delete-applications">
+    <!-- 지원서 선택 삭제 -->
+    <button type="submit" class="study-button btn-delete-selected-applications">선택 삭제</button>
 
-  <p class="study-label"> 대기 중 / 불합격</p>
-  <ul class="study-list">
-    <% pending.forEach(app => { %>
-      <li class="study-item">
-        <strong><%= app.studyTitle %></strong><br>
-        상태: <%= app.status || "대기 중" %><br>
-        <form action="/studyR/applications/delete/<%= app.studyId %>" method="POST">
-          <button type="submit" class="study-button delete-button">삭제</button>
-        </form>
-      </li>
-    <% }) %>
-  </ul>
+    <p class="study-label">지원한 스터디 목록</p>
+
+    <!-- 합격 -->
+    <h3>합격:</h3>
+    <ul class="study-list applied-list-pass">
+      <% ongoing.forEach(app => { %>
+        <li class="study-item">
+          <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+          <strong><%= app.studyTitle %></strong><br>
+          상태: <%= app.status %><br>
+        </li>
+      <% }) %>
+    </ul>
+
+    <!-- 대기 중 / 불합격 -->
+    <h3>대기 중 / 불합격:</h3>
+    <ul class="study-list applied-list-pending">
+      <% pending.forEach(app => { %>
+        <li class="study-item">
+          <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+          <strong><%= app.studyTitle %></strong><br>
+          상태: <%= app.status || "대기 중" %><br>
+        </li>
+      <% }) %>
+    </ul>
+  </form>
 </section>
 </main>
 <h1>내 구글 캘린더 보기</h1>
@@ -163,5 +164,82 @@
   });
 });
   </script>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. 스터디 개별 삭제
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('.btn-delete-study');
+    if (!btn) return;
+
+    const id = btn.dataset.studyId;
+    if (!id) {
+      alert('스터디 ID가 없습니다.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/studyR/studies/delete/${id}`, {
+        method: 'POST'
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      const result = await res.json();
+      if (result.redirect) {
+        location.href = result.redirect;
+      } else {
+        alert('삭제 실패');
+      }
+    } catch (err) {
+      console.error('스터디 삭제 실패:', err);
+      alert('삭제 중 오류 발생');
+    }
+  });
+
+  // 2. 지원서 선택 삭제
+  const form = document.getElementById('form-delete-applications');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const checked = [...document.querySelectorAll('.checkbox-delete-application:checked')];
+    if (checked.length === 0) return alert('삭제할 항목을 선택하세요.');
+    if (!confirm('선택한 항목을 삭제하시겠습니까?')) return;
+
+    const studyIds = checked.map(cb => cb.dataset.studyId);
+
+    try {
+      const res = await fetch('/studyR/applications/delete-bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studyIds })
+      });
+
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('지원서 삭제 실패');
+      }
+    } catch (err) {
+      console.error('지원서 삭제 실패:', err);
+      alert('삭제 중 오류 발생');
+    }
+  });
+
+  // 3. 새로운 스터디 등록 페이지로 이동
+  document.getElementById('toStudyWrite').addEventListener('click', () => {
+    window.location.href = '/studyR/studies/new';
+  });
+
+});
+</script>
+
+
+
+
 </body>
 </html>

@@ -1,42 +1,90 @@
-<h2><%= study.title %> 지원자 관리</h2>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title><%= study.title %> 지원자 관리</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+</head>
+<body>
+  <header>
+    <h1>SPARK 지원자 관리</h1>
+    <nav>
+      <a href="/studyR/webP">MAIN</a>
+      <a href="/login">LOGOUT</a>
+    </nav>
+  </header>
 
-<h3> 합격자 명단</h3>
-<ul>
-  <% approved.forEach(app => { %>
-    <li><%= app.name %> (<%= app.email %>)</li>
-  <% }) %>
-  <% if (approved.length === 0) { %>
-    <li>아직 없음</li>
-  <% } %>
-</ul>
+  <main>
+    <h2><%= study.title %> 지원자 관리</h2>
 
-<hr>
+    <h3>합격자 명단</h3>
+    <ul>
+      <% approved.forEach(app => { %>
+        <li><%= app.name %> (<%= app.email %>)</li>
+      <% }) %>
+      <% if (approved.length === 0) { %>
+        <li>아직 없음</li>
+      <% } %>
+    </ul>
 
-<h3>미처리 지원자 목록</h3>
-<ul>
-  <% pending.forEach(app => { %>
-    <li>
-      <strong><%= app.name %></strong> (<%= app.email %>)  
-      - 상태: <%= app.status || "미정" %><br>
-      기술스택: <%= app.stack %><br>
-      소개: <%= app.intro %><br>
-      지원동기: <%= app.reason %><br>
-      포트폴리오: <%= app.github %><br>
-
-      <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" style="display:inline;">
-        <input type="hidden" name="status" value="합격">
-        <button type="submit">합격</button>
-      </form>
-      <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" style="display:inline;">
-        <input type="hidden" name="status" value="불합격">
-        <button type="submit">불합격</button>
-      </form>
-    </li>
     <hr>
-  <% }) %>
-</ul>
-<hr>
-<a href="/studyR/mypage">
-  <button style="margin-top: 20px;">마이페이지로 돌아가기</button>
-</a>
+
+    <h3>미처리 지원자 목록</h3>
+    <ul>
+      <% pending.forEach(app => { %>
+        <li>
+          <strong><%= app.name %></strong> (<%= app.email %>)  
+          - 상태: <%= app.status || "미정" %><br>
+          기술스택: <%= app.stack %><br>
+          소개: <%= app.intro %><br>
+          지원동기: <%= app.reason %><br>
+          포트폴리오: <%= app.github %><br>
+
+          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" class="status-form" style="display:inline;">
+            <input type="hidden" name="status" value="합격">
+            <button type="submit">합격</button>
+          </form>
+          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" class="status-form" style="display:inline;">
+            <input type="hidden" name="status" value="불합격">
+            <button type="submit">불합격</button>
+          </form>
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+
+    <hr>
+    <a href="/studyR/mypage">
+      <button style="margin-top: 20px;">마이페이지로 돌아가기</button>
+    </a>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('form.status-form').forEach(form => {
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+
+          const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          const result = await res.json();
+          if (result.redirect) {
+            window.location.href = result.redirect;
+          } else {
+            alert(result.error || '처리 실패');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
+
 
