@@ -1,84 +1,106 @@
-html, body {
-    height: 100%;
+/* 전체 레이아웃 */
+body {
     margin: 0;
-    padding: 0;
     font-family: 'Noto Sans KR', sans-serif;
-    background-color: white;
+    background-color: #f4f6f8;
+    color: #37474F;
 }
 
-.favicon {
-    width: 20px;
-    height: 20px;
-}
-
+/* 컨테이너: 사이드바 + 본문 */
 .container {
     display: flex;
-    min-height: 100vh;
-    background-color: white;
+    justify-content: center;
+    padding: 40px 20px;
 }
 
+/* 왼쪽 사이드바 */
 .sidebar {
     width: 100px;
-    background-color: #d9d9d9;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding-top: 20px;
 }
 
-.sidebar img {
+.favicon {
     width: 60px;
     height: 60px;
 }
 
+/* 본문 영역 */
 .content {
     flex: 1;
-    background-color: white;
-    padding: 50px;
-    box-sizing: border-box;
+    max-width: 800px;
 }
 
 .form-wrapper {
-    margin: 0 auto;
-    width: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    /* 왼쪽 정렬 유지하고 싶으면 이대로, 가운데로 바꾸려면 center */
+    background-color: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* 제목 */
 h2 {
-    font-size: 28px;
-    margin-bottom: 40px;
     text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
 }
 
+/* 정보 구간 스타일 */
 .info-label {
     font-weight: bold;
-    margin: 20px 0 5px;
-    font-size: 16px;
-    align-items: center;
+    margin-top: 25px;
+    margin-bottom: 6px;
+    font-size: 15px;
 }
 
 .info-value {
-    background-color: #e3e3e3;
-    height: 20px;
-    width: 100%;
-    margin-bottom: 10px;
+    background-color: #eceff1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: pre-wrap;
 }
 
-a.apply-btn {
+/* 지원하기 버튼 */
+.apply-btn {
     display: inline-block;
-    padding: 12px 24px;
-    background-color: #474747;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
     margin-top: 30px;
+    padding: 12px 24px;
+    background-color: #455A64;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
-a.apply-btn:hover {
-    background-color: #292929;
+.apply-btn:hover {
+    background-color: #263238;
+}
+
+/* 지도 */
+#map {
+    width: 100%;
+    height: 350px;
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+/* 반응형 (옵션) */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .form-wrapper {
+        padding: 20px;
+    }
 }
