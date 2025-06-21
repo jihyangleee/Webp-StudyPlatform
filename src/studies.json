@@ -178,5 +178,22 @@
     "location_lng": "",
     "action": "upload",
     "thumbnailPath": null
+  },
+  {
+    "id": "1750509936395",
+    "writer": "4276029693",
+    "title": "숨김",
+    "description": "",
+    "techstack": "[{\"value\":\"히히\"}]",
+    "team_size": "3",
+    "progress_method": "온라인",
+    "deadline": "2025-06-27",
+    "requirements": "",
+    "thumbnail": {},
+    "place": "",
+    "location_lat": "",
+    "location_lng": "",
+    "action": "enroll",
+    "thumbnailPath": null
   }
 ]

@@ -127,6 +127,10 @@ router.get('/filter', (req, res) => {
     studies = fileData ? JSON.parse(fileData) : [];
   }
 
+  studies = studies.filter(
+    study => study.action?.toLowerCase().trim() !== 'enroll'
+  );
+
   const now = dayjs();
 
   const filtered = studies.filter(study => {
@@ -168,8 +172,12 @@ router.get('/autocomplete', (req, res) => {
   let studies = [];
   if (fs.existsSync(filePath)) {
     const fileData = fs.readFileSync(filePath, 'utf8');
-    studies = fileData ? JSON.parse(fileData) : [];
+    studies = fileData ? JSON.parse(fileData) : []; 
   }
+
+  studies = studies.filter(
+    study => study.action?.toLowerCase().trim() !== 'enroll'
+  );
 
   const matches = studies
     .map(study => study.title)

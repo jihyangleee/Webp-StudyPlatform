@@ -27,8 +27,11 @@ router.post('/kakao', async (req, res) => {
       headers: { Authorization: `Bearer ${kakaoToken}` }
     });
 
-    const kakaoId = kakaoUser.data.id;
+    console.log(kakaoUser.data);
+
+    const kakaoId = kakaoUser.data.id
     const nickname = kakaoUser.data.kakao_account.profile.nickname;
+
 
     // user.json 읽기
     let users = [];
