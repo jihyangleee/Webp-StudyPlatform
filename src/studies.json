@@ -195,5 +195,21 @@
     "location_lng": "126.97613916111618",
     "action": "upload",
     "thumbnailPath": "/uploads/3-1750521423976.png"
-  } 
+  },
+  {
+    "id": "1750522641247",
+    "writer": "4279639219",
+    "title": "휴해내다",
+    "description": "ㅇㄹㅇㄹ",
+    "techstack": "[{\"value\":\"ㅇㄹㅇㄹ\"}]",
+    "team_size": "2",
+    "progress_method": "오프라인",
+    "deadline": "2025-06-27",
+    "requirements": "dfdf",
+    "place": "서울 중구 태평로2가 43",
+    "location_lat": "37.564346240559246",
+    "location_lng": "126.97745318567424",
+    "action": "upload",
+    "thumbnailPath": "/uploads/ì¤í¬ë¦°ì· 2024-07-08 155508-1750522641237.png"
+  }
 ]

@@ -106,20 +106,18 @@ router.get('/webP', (req, res) => {
   const filePath = path.join(__dirname, '../src/studies.json');
   let studies = [];
 
- if (fs.existsSync(filePath)) {
-  const raw = fs.readFileSync(filePath, 'utf8');
-  try {
-    const parsed = JSON.parse(raw);
-  } catch (err) {
-    console.error('파일이 JSON 형식이 아닙니다:', raw.slice(0, 100));
+  if (fs.existsSync(filePath)) {
+    const raw = fs.readFileSync(filePath, 'utf8');
+    try {
+      studies = JSON.parse(raw); // ✅ 할당 필요
+    } catch (err) {
+      console.error('파일이 JSON 형식이 아닙니다:', raw.slice(0, 100));
+    }
   }
-}
 
   const filtered = studies.filter(study => study.action === 'upload');
-
-  res.render('webP', { studies: filtered });  // views/webP.ejs를 렌더링
+  res.render('webP', { studies: filtered });
 });
-
 //필터링 기능 구현
 router.get('/filter', (req, res) => {
   const { techstack, progress_method, deadline } = req.query;
