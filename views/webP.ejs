@@ -62,6 +62,10 @@
                 <button id="openFilterModal" class="filter-btn">필터 설정</button>
             </div>
         </div>
+        <!-- 자동검색기능 -->
+             <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
+            <div id="autocompleteList" class="autocomplete-list"></div>
+            <button id="searchBtn">검색</button>
 
         <!-- 모달창 -->
         <div id="filterModal" class="modal hidden">
@@ -137,31 +141,7 @@
         </script>
 
 
-        <!-- <button class="filter-btn">필터 설정</button>-->
-
-
-        <!-- <div class="project-list">
-            <% if (studies.length === 0) { %>
-                <p>조건에 맞는 스터디가 없습니다.</p>
-            <% } else { %>
-                <% studies.forEach(study => { %>
-                    <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
-                        <div class="project-card">
-                        <strong><%= study.title %></strong><br/>
-                         기술: <% try {
-                          const techs = JSON.parse(study.techstack);
-                          techs.forEach(t => { %>
-                           <span><%= t.value %></span>
-                        <% }) } catch(e) { %>
-                        <%= study.techstack %>
-                        <% } %> |
-                         방식: <%= study.progress_method %> |
-                         마감일: <%= study.deadline %>
-                        </div>
-                    </a>
-                <% }) %>
-            <% } %>
-            </div> -->
+            <!-- 화면에 안나타난 이유 라우터에서 데이터를 받을때 studies값에 아무것도 안넣음 -->
         <div class="project-list">
             <% if (studies.length===0) { %>
                 <p>조건에 맞는 스터디가 없습니다.</p>
