@@ -1,25 +1,23 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // 메인페이지용 로직만 넣기 (예: 마이페이지 버튼 처리)
+    // ✅ 마이페이지 버튼
     const mypageBtn = document.querySelector('.mypage');
     if (mypageBtn) {
         mypageBtn.addEventListener('click', function () {
             window.location.href = '/studyR/mypage';
         });
     }
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    // ✅ 캐러셀
     const wrapper = document.querySelector('.carousel-wrapper');
     const carousel = document.querySelector('.carousel-images');
     const slides = document.querySelectorAll('.carousel-images img');
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
 
+    let index = 0;
+    let timer;
 
-let index = 0;
-let timer;
-
-function updateCarousel() {
+    function updateCarousel() {
         const slideWidth = wrapper.clientWidth;
         carousel.style.transform = `translateX(-${index * slideWidth}px)`;
     }
@@ -40,20 +38,82 @@ function updateCarousel() {
     window.addEventListener('resize', updateCarousel);
     updateCarousel();
 
-    // ✅ 자동 슬라이드 시작 함수
-    function startAutoSlide() {
-        timer = setInterval(showNextSlide, 3000);
+    wrapper.addEventListener('mouseenter', () => clearInterval(timer));
+    wrapper.addEventListener('mouseleave', () => timer = setInterval(showNextSlide, 3000));
+    timer = setInterval(showNextSlide, 3000);
+
+    // ✅ 자동완성
+    const searchInput = document.getElementById('titleSearch');
+    const list = document.getElementById('autocompleteList');
+
+    searchInput.addEventListener('input', async () => {
+        const query = searchInput.value.trim();
+        if (query.length === 0) {
+            list.innerHTML = '';
+            return;
+        }
+
+        const res = await fetch(`/studyR/autocomplete?query=${encodeURIComponent(query)}`);
+        const matches = await res.json();
+
+        list.innerHTML = matches.map(title =>
+            `<div class="autocomplete-item" onclick="selectTitle('${title}')">${title}</div>`
+        ).join('');
+    });
+
+    function selectTitle(title) {
+        searchInput.value = title;
+        list.innerHTML = '';
     }
 
-    // ✅ 자동 슬라이드 멈춤 함수
-    function stopAutoSlide() {
-        clearInterval(timer);
+    // ✅ 검색 기능
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        const studyCards = document.querySelectorAll('.project-card');
+        studyCards.forEach(card => {
+            const title = card.querySelector('strong').innerText.toLowerCase();
+            card.style.display = title.includes(query) ? 'block' : 'none';
+        });
+    });
+
+    // ✅ 필터 드롭다운 동작
+    const toggleBtn = document.getElementById('filterToggleBtn');
+    const filterPanel = document.getElementById('filterPanel') || document.getElementById('filterDropdown');
+    const cancelBtn = document.getElementById('cancelFilter');
+    const clearBtn = document.getElementById('clearFilters');
+
+    if (toggleBtn && filterPanel) {
+        toggleBtn.addEventListener('click', () => {
+            filterPanel.classList.toggle('hidden');
+        });
     }
 
-    // ✅ 마우스 올라가면 멈춤 / 벗어나면 다시 시작
-    wrapper.addEventListener('mouseenter', stopAutoSlide);
-    wrapper.addEventListener('mouseleave', startAutoSlide);
+    if (cancelBtn && filterPanel) {
+        cancelBtn.addEventListener('click', () => {
+            filterPanel.classList.add('hidden');
+        });
+    }
 
-    // 초기 자동 슬라이드 시작
-    startAutoSlide();
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            document.getElementById('filterForm').reset();
+        });
+    }
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('filterModal');
+    const openBtn = document.getElementById('openFilterModal');
+    const closeBtn = document.getElementById('closeFilterModal');
+
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
 });
