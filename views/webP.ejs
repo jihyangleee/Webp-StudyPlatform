@@ -61,7 +61,14 @@
                 <div class="project-header">
                     <div class="filter-header">
                         <h2>모집 중인 스터디 및 프로젝트</h2>
-                        <button id="openFilterModal" class="filter-btn">필터 설정</button>
+                        <!-- 자동검색기능 -->
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
+                                <button id="searchBtn" class="filter-btn">검색</button>
+                            </div>
+                            <button id="openFilterModal" class="filter-btn">필터 설정</button>
+                        </div>
                     </div>
                 </div>
 
@@ -96,10 +103,7 @@
                     </div>
                 </div>
             </div>
-            <!-- 자동검색기능 -->
-            <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
-            <div id="autocompleteList" class="autocomplete-list"></div>
-            <button id="searchBtn">검색</button>
+
 
             <!-- 모달창 -->
             <div id="filterModal" class="modal hidden">
