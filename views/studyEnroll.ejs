@@ -154,30 +154,29 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 <link rel="stylesheet" href="/dist/assets/main-Bl-Z3xrU.css" />
 
 
-
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('studyForm');
-    const descriptionInput = document.getElementById('description');
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('studyForm');
+  const descriptionInput = document.getElementById('description');
 
-    if (!form || !descriptionInput) return;
+  if (!form || !descriptionInput) return;
 
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-      descriptionInput.value = window.editorInstance?.getMarkdown?.() || '';
+    // 마크다운 에디터 내용 적용
+    descriptionInput.value = window.editorInstance?.getMarkdown?.() || '';
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(form);
+    const clickedButton = document.activeElement;
+    formData.append('action', clickedButton?.value);
 
-      const clickedButton = document.activeElement;
-      data.action = clickedButton?.value;
+    const url = form.getAttribute('action');
 
-      const url = form.getAttribute('action');
+    try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: formData, // ✅ Content-Type 생략
       });
 
       const result = await res.json();
@@ -186,8 +185,13 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
       } else {
         alert(result.error || '저장 실패');
       }
-    });
+    } catch (err) {
+      console.error('업로드 실패:', err);
+      alert('업로드 중 오류가 발생했습니다.');
+    }
   });
+});
+  
 </script>
 
 

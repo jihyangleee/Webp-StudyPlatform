@@ -106,10 +106,14 @@ router.get('/webP', (req, res) => {
   const filePath = path.join(__dirname, '../src/studies.json');
   let studies = [];
 
-  if (fs.existsSync(filePath)) {
-    const fileData = fs.readFileSync(filePath, 'utf8');
-    studies = fileData ? JSON.parse(fileData) : [];
+ if (fs.existsSync(filePath)) {
+  const raw = fs.readFileSync(filePath, 'utf8');
+  try {
+    const parsed = JSON.parse(raw);
+  } catch (err) {
+    console.error('파일이 JSON 형식이 아닙니다:', raw.slice(0, 100));
   }
+}
 
   const filtered = studies.filter(study => study.action === 'upload');
 
@@ -126,6 +130,10 @@ router.get('/filter', (req, res) => {
     const fileData = fs.readFileSync(filePath, 'utf8');
     studies = fileData ? JSON.parse(fileData) : [];
   }
+
+  studies = studies.filter(
+    study => study.action?.toLowerCase().trim() !== 'enroll'
+  );
 
   const now = dayjs();
 
@@ -168,8 +176,12 @@ router.get('/autocomplete', (req, res) => {
   let studies = [];
   if (fs.existsSync(filePath)) {
     const fileData = fs.readFileSync(filePath, 'utf8');
-    studies = fileData ? JSON.parse(fileData) : [];
+    studies = fileData ? JSON.parse(fileData) : []; 
   }
+
+  studies = studies.filter(
+    study => study.action?.toLowerCase().trim() !== 'enroll'
+  );
 
   const matches = studies
     .map(study => study.title)
@@ -213,6 +225,7 @@ router.post('/studies', upload.single('thumbnail'), (req, res) => {
     ...data,
     thumbnailPath: req.file ? `/uploads/${req.file.filename}` : null // ← 파일 경로 저장
   };
+
 
   studies.push(newStudy);
   const jsonData = JSON.stringify(studies, null, 2);
