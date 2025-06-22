@@ -33,69 +33,72 @@
     <p id="welcomeMsg"></p>
 
     <script>
+  Kakao.init('<%= kakaoKey %>');  // 서버에서 전달된 키 사용
+  let isLoggingIn = false;
 
-      Kakao.init('<%=kakaoKey%>');  // 서버에서 전달받은 카카오 키 삽입
-      let isLoggingIn = false;
+  function loginWithKakao() {
+    if (isLoggingIn) return;
 
-      function loginWithKakao() {
-        if (isLoggingIn) return;
+    isLoggingIn = true;
+    Kakao.Auth.login({
+      throughTalk: false, // ← 이걸 꼭 추가!
+      success: function (authObj) {
+        fetch('/kakao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: authObj.access_token }),
+          credentials: 'include' // 쿠키 전송 허용
+        })
+        .then(res => res.json())
+        .then(data => {
+          // 서버가 돌려준 username을 localStorage에 저장
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('userId', data.userId); // ← 필요 시 서버에서 같이 내려보냄
 
-        isLoggingIn = true;
-        Kakao.Auth.login({
-          success: function (authObj) {
-            fetch('/kakao', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token: authObj.access_token }),
-              credentials: 'include'
-            })
-              .then(res => res.json())
-              .then(data => {
-                localStorage.setItem('jwt', data.token);
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('userId', data.userId);
-                // localStorage.setItem('phone', data.phone);
-                showWelcome();
+          showWelcome();
 
-                // 로그인 후 페이지 이동
-                window.location.href = '/studyR/webP';
-              })
-              .finally(() => {
-                isLoggingIn = false;
-              });
-          },
-          fail: function (err) {
-            alert(JSON.stringify(err));
-            isLoggingIn = false;
-          }
+          // 로그인 후 이동
+          window.location.href = '/studyR/webP';
+        })
+        .finally(() => {
+          isLoggingIn = false;
         });
+      },
+      fail: function (err) {
+        alert(JSON.stringify(err));
+        isLoggingIn = false;
       }
+    });
+  }
 
-      function logout() {
-        localStorage.removeItem('jwt');
-        localStorage.removeItem('username');
-        showWelcome();
-      }
+function logout() {
+  fetch('/logout', {
+    method: 'POST',
+    credentials: 'include'
+  }).then(() => {
+    localStorage.clear();
+    document.cookie = 'currentUserName=; Max-Age=0';
 
-      function showWelcome() {
-        const username = localStorage.getItem('username');
-        if (username) {
-          document.getElementById('welcomeMsg').innerText = `환영합니다, ${username}님`;
-          document.getElementById('loginBtn').style.display = 'none';
-          document.getElementById('logoutBtn').style.display = 'inline-block';
-        } else {
-          document.getElementById('welcomeMsg').innerText = '';
-          document.getElementById('loginBtn').style.display = 'inline-block';
-          document.getElementById('logoutBtn').style.display = 'none';
-        }
-      }
+    Kakao.Auth.logout(function () {
+      console.log('카카오 access token 삭제 완료');
+      window.location.href = '/login'; // 또는 reload
+    });
+  });
+}
 
-      // document.querySelector('.mypage').addEventListener('click', () => {
-      //   window.location.href = 'studyR/mypage'; // 마이페이지 URL로 변경
-      // });
+  function showWelcome() {
+    const username = localStorage.getItem('username');
+    if (username) {
+      document.getElementById('welcomeMsg').textContent = `환영합니다, ${username}님!`;
+      document.getElementById('loginBtn').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = 'inline-block';
+    }
+  }
 
-      window.onload = showWelcome;
-    </script>
+  // 페이지 로딩 시
+  window.onload = showWelcome;
+</script>
+
 </body>
 
 </html>

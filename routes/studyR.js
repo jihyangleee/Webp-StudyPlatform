@@ -226,9 +226,9 @@ router.post('/studies', upload.single('thumbnail'), (req, res) => {
     writer: userId || 'anonymous',
     ...data,
     thumbnailPath: req.file ? `/uploads/${req.file.filename}` : null,// ← 파일 경로 저장
-    descriptionHtml: marked.parse(data.description || '')
+    descriptionHtml: marked.parse(data.description || ''),
+    requirements: req.body.requirements || ''
   };
-
 
   studies.push(newStudy);
   const jsonData = JSON.stringify(studies, null, 2);
@@ -290,7 +290,8 @@ router.post('/studies/edit/:id', upload.single('thumbnail'), (req, res) => {
     ...existing,
     ...req.body,
     thumbnailPath: req.file ? `/uploads/${req.file.filename}` : existing.thumbnailPath,
-    descriptionHtml : marked.parse(description)
+    descriptionHtml: marked.parse(req.body.description || ''),
+    requirements: req.body.requirements || ''
   };
 
   // 업데이트
@@ -372,6 +373,7 @@ router.post('/apply/:id', (req, res) => {
   if (fs.existsSync(applyFile)) {
     try {
       allApplications = JSON.parse(fs.readFileSync(applyFile, 'utf8'));
+      console.error('지원서가 작성되었습니다.');
     } catch (err) {
       return res.status(500).json({ error: '지원서 JSON 파싱 실패' });
     }
@@ -381,15 +383,16 @@ router.post('/apply/:id', (req, res) => {
     allApplications[studyId] = [];
   }
 
-  const already = allApplications[studyId].find(app => app.userId === userId);
-  if (already) {
-    return res.status(400).json({ error: '이미 지원한 사용자입니다.' });
-  }
+  // const already = allApplications[studyId].find(app => app.userId === userId);
+  // if (already) {
+  //   return res.status(400).json({ error: '이미 지원한 사용자입니다.' });
+  // }
 
   allApplications[studyId].push(application);
 
   try {
     fs.writeFileSync(applyFile, JSON.stringify(allApplications, null, 2));
+
   } catch (err) {
     console.error('지원서 저장 오류:', err);
     return res.status(500).send('지원서 저장 중 오류 발생');

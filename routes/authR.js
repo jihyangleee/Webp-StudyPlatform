@@ -19,47 +19,55 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/kakao', async (req, res) => {
-  const kakaoToken = req.body.token;
-
   try {
-    // 1. 카카오에서 사용자 정보 가져오기
-    const kakaoUser = await axios.get('https://kapi.kakao.com/v2/user/me', {
-      headers: { Authorization: `Bearer ${kakaoToken}` }
+    const { token } = req.body;
+
+    const kakaoRes = await fetch('https://kapi.kakao.com/v2/user/me', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+      }
     });
 
-    const kakaoId = kakaoUser.data.id;
-    const nickname = kakaoUser.data.kakao_account.profile.nickname;
+    const kakaoData = await kakaoRes.json();
+    const kakaoId = kakaoData.id;
+    const nickname = kakaoData.properties?.nickname || '익명';
 
-    // 2. user.json에 사용자 저장
-    let users = [];
-    if (fs.existsSync(userFile)) {
-      const data = fs.readFileSync(userFile);
-      users = JSON.parse(data);
-    }
-
-    let user = users.find(u => u.kakaoId === kakaoId);
-    if (!user) {
-      user = { kakaoId, nickname };
-      users.push(user);
-      fs.writeFileSync(userFile, JSON.stringify(users, null, 2));
-    }
-
-    // 3. 카카오userid을 쿠키에 저장 (JWT 대신)
+    // 쿠키 설정
     res
       .cookie('currentUserId', kakaoId, {
         httpOnly: true,
         sameSite: 'lax',
-        secure: false, // 배포 시 true + HTTPS
+        secure: false,
         path: '/',
         maxAge: 1000 * 60 * 60 // 1시간
       })
-      .json({ username: nickname });
+      .cookie('currentUserName', nickname, {
+        httpOnly: false, // localStorage용으로 JS에서 접근 가능하게
+        sameSite: 'lax',
+        secure: false,
+        path: '/',
+        maxAge: 1000 * 60 * 60
+      });
+
+    // localStorage 저장용 정보 응답
+    res.json({
+      username: nickname,
+      userId: kakaoId
+    });
 
   } catch (err) {
     console.error('카카오 API 오류:', err.message);
     res.status(400).json({ message: '카카오 인증 실패' });
   }
-  // const userId = req.cookies.currentUserId;
+});
+router.post('/logout', (req, res) => {
+  res.clearCookie('currentUserId');
+  res.clearCookie('currentUserName');
+  res.json({ success: true });
+  Kakao.Auth.logout(function () {
+  console.log('카카오에서 완전히 로그아웃됨');
+});
 });
 
 
