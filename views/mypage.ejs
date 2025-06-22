@@ -39,19 +39,27 @@
 <body>
   <!-- ajax 구현 -->
   <script>
-    async function loadNotifications() {
-      const res = await fetch('/studyR/notifications');
-      const data = await res.json();
+    document.addEventListener('DOMContentLoaded', () => {
+    loadNotifications(); // ← ✅ 알림 목록 불러오기 추가
+    setInterval(loadNotifications, 5000); // ← ✅ 5초마다 새로고침 (선택)
 
-      // 읽지 않은 알림 수 표시
-      const count = data.notifications.filter(n => !n.read).length;
-      const badge = document.getElementById('notification-count');
-      badge.textContent = count;
-      badge.style.display = count > 0 ? 'inline-block' : 'none';
-
-      // 알림 리스트 렌더링
+    document.getElementById('notification-bell').addEventListener('click', () => {
       const list = document.getElementById('notification-list');
-      list.innerHTML = data.notifications.map(n => `
+      list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  async function loadNotifications() {
+    const res = await fetch('/studyR/notifications');
+    const data = await res.json();
+
+    const count = data.notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notification-count');
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline-block' : 'none';
+
+    const list = document.getElementById('notification-list');
+    list.innerHTML = data.notifications.map(n => `
       <div style="padding: 8px; border-bottom: 1px solid #ddd;">
         <div>
           ${n.message}
@@ -65,26 +73,17 @@
         </div>
       </div>
     `).join('');
-    }
+  }
 
-    async function markAsRead(timestamp) {
-      await fetch(`/studyR/notifications/${timestamp}/read`, { method: 'POST' });
-      loadNotifications();
-    }
-
-    async function deleteNoti(timestamp) {
-      await fetch(`/studyR/notifications/${timestamp}/delete`, { method: 'POST' });
-      loadNotifications();
-    }
-
-    document.getElementById('notification-bell').addEventListener('click', () => {
-      const list = document.getElementById('notification-list');
-      list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // 최초 실행 및 주기적 갱신
+  async function markAsRead(timestamp) {
+    await fetch(`/studyR/notifications/${timestamp}/read`, { method: 'POST' });
     loadNotifications();
-    setInterval(loadNotifications, 5000);
+  }
+
+  async function deleteNoti(timestamp) {
+    await fetch(`/studyR/notifications/${timestamp}/delete`, { method: 'POST' });
+    loadNotifications();
+  }
   </script>
   <header class="header">
     <div class="logo">
@@ -92,7 +91,7 @@
       <h1>MYPAGE</h1>
     </div>
     <nav class="nav">
-      <div class="notification-wrapper">
+       <div class="notification-wrapper">
         <span id="notification-bell">
         <img src="/images/bell.png" alt="알림" style="width: 24px; height: 24px;">
       </span>
@@ -102,6 +101,25 @@
       <a href="/studyR/webP">MAIN</a>
       <a href="/login">LOGOUT</a>
     </nav>
+    <style>
+@keyframes pastelCycle {
+  0%   { background-color: #ffd1dc; } /* 연핑크 */
+  20%  { background-color: #ffe5b4; } /* 연오렌지 */
+  40%  { background-color: #fff5ba; } /* 연노랑 */
+  60%  { background-color: #d0f4de; } /* 민트 */
+  80%  { background-color: #cde7f0; } /* 하늘 */
+  100% { background-color: #e6ccf5; } /* 연보라 */
+}
+
+.profile-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #aaa;
+  animation: pastelCycle 8s infinite ease-in-out;
+  transition: background-color 1s ease;
+}
+</style>
   </header>
   
   <main class="mypage-container">
@@ -115,13 +133,19 @@
     <div class="profile-content">
     <div class="profile-img" id="profile-img"></div>
     <div class="profile-text">
-      <div id="username">이름</div>
-      <div id="email">@seoultech.ac.kr</div>
+      <div id="username"></div>
+      <div id="phone"></div>
     </div>
-    <button onclick="location.href='/basicInfo'">회원정보 보기</button>
+    <!-- <button onclick="location.href='/basicInfo'">회원정보 보기</button> -->
   </div>
   </section>
 
+  <script>
+    const user = localStorage.getItem('username');
+    // const phone = localStorage.getItem('phone');
+    // document.getElementById('phone').innerText = `${phone}`;
+    document.getElementById('username').innerText = `이름: ${user}님`;
+  </script>
 
   
 
@@ -187,15 +211,17 @@
         <!-- 대기 중 / 불합격 -->
         <h3>대기 중 / 불합격:</h3>
         <ul class="study-list applied-list-pending">
-          <% pending.forEach(app=> { %>
+          <% pending.forEach(app => { %>
             <li class="study-item">
-              <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
-              <strong>
-                <%= app.studyTitle %>
-              </strong><br>
-              상태: <%= app.status || "대기 중" %><br>
+              <div class="study-info">
+                <strong><%= app.studyTitle %></strong><br>
+                <span class="study-status">상태: <%= app.status || "대기 중" %></span>
+              </div>
+              <div class="study-checkbox">
+                <input type="checkbox" class="checkbox-delete-application" data-study-id="<%= app.studyId %>">
+              </div>
             </li>
-            <% }) %>
+          <% }) %>
         </ul>
       </form>
     </section>

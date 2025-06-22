@@ -59,7 +59,7 @@ router.post('/kakao', async (req, res) => {
     console.error('카카오 API 오류:', err.message);
     res.status(400).json({ message: '카카오 인증 실패' });
   }
-  const userId = req.cookies.currentUserId;
+  // const userId = req.cookies.currentUserId;
 });
 
 

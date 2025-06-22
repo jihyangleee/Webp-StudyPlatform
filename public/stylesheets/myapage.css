@@ -4,6 +4,13 @@ body {
     font-family: 'Noto Sans KR', sans-serif;
 
 }
+.study-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  gap: 20px;
+}
 
 .notification-wrapper {
     position: relative;

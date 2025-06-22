@@ -5,9 +5,11 @@ var fs = require('fs');
 var path = require('path');
 
 // 마이페이지 렌더링
+
 const eventsPath = path.join(__dirname, '../src/schedule.json');
 const notificationFile = path.join(__dirname, '../src/notifications.json');
-router.get('/mypage', (req, res) => {
+router.get('/mypage',(req, res) => {
+  
   // const userFilePath = path.join(__dirname, '../user.json');
   const savedEvents = JSON.parse(fs.readFileSync(eventsPath, 'utf8')); //캘린더 내용임
   const filePath = path.join(__dirname, '../src/studies.json');
@@ -25,6 +27,8 @@ router.get('/mypage', (req, res) => {
   let studies = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   const userId = req.cookies.currentUserId;  // ← 로그인한 사용자 kakaoId
+  
+
   const myStudies = studies.filter(study => study.writer === userId);  // ← 내 글만 추출
   if (!userId) return res.redirect('/login');
 

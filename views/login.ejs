@@ -7,7 +7,7 @@
   <title>SPARK - 로그인</title>
   <link rel="stylesheet" href="/stylesheets/login.css" />
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="icon" href="images/favicon.png" type="image/png">
 </head>
 
 <body>
@@ -46,12 +46,15 @@
             fetch('/kakao', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token: authObj.access_token })
+              body: JSON.stringify({ token: authObj.access_token }),
+              credentials: 'include'
             })
               .then(res => res.json())
               .then(data => {
                 localStorage.setItem('jwt', data.token);
                 localStorage.setItem('username', data.username);
+                localStorage.setItem('userId', data.userId);
+                // localStorage.setItem('phone', data.phone);
                 showWelcome();
 
                 // 로그인 후 페이지 이동

@@ -2,7 +2,20 @@
   "1750558984358": [
     {
       "userId": "4279639219",
-      "name": "김스터디",
+      "name": "이지향",
+      "age": "21",
+      "email": "xxxxxxxxxxxx@naver.com",
+      "stack": "sql",
+      "intro": "열정이 많은 대학생 2학년입니다",
+      "reason": "웹에 관심이 많아 지원하게 되었습니다",
+      "github": "https://github.com/jihyangleee/Webp-StudyPlatform.git",
+      "status": "대기중"
+    }
+  ],
+  "1750588264637": [
+    {
+      "userId": "4276029693",
+      "name": "이스터디",
       "age": "21",
       "email": "xxxxxxxxxxxx@naver.com",
       "stack": "sql",
