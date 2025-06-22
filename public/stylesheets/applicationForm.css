@@ -2,8 +2,8 @@
 body {
     margin: 0;
     font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f4f6f8;
-    color: #37474F;
+    background-color: #ffffff;
+    color: #444;
 }
 
 /* 헤더 영역 */
@@ -45,12 +45,13 @@ h1 {
 
 /* 메인 영역 */
 main {
+    flex: 1;
     max-width: 800px;
     margin: 40px auto;
-    padding: 40px;
+    padding: 24px;
     background-color: white;
     border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 main h2 {

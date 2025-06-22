@@ -66,7 +66,7 @@ app.use('/studyR',studyRouter);
 app.use('/calendarR', calendarRouter);
 
 app.get('/mypage', (req, res) => {
-  res.render('mypage', { studies: [], ongoing: [], pending: []});
+  res.render('mypage', { studies: [], ongoing: [], pending: [], events: []});
 });
 
 
