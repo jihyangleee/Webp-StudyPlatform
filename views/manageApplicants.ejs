@@ -1,62 +1,95 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
-  <title><%= study.title %> 지원자 관리</title>
+  <title>
+    <%= study.title %> 지원자 관리
+  </title>
   <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/stylesheets/manageApplicants.css">
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+
 </head>
+
 <body>
-  <header>
-    <h1>SPARK 지원자 관리</h1>
-    <nav>
-      <a href="/studyR/webP">MAIN</a>
+  <header class="header">
+    <!-- <div class="header-inner"> -->
+
+
+    <div class="logo"> <!--파비콘 클릭하면 메인페이지로-->
+      <a href="/studyR/webP">
+        <img src="/favicon.png" alt="파비콘" class="favicon">
+      </a>
+      <div>
+        <h1>SPARK</h1>
+        <p>우리의 스터디 파크</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="/mypage">MYPAGE</a>
       <a href="/login">LOGOUT</a>
     </nav>
   </header>
 
-  <main>
-    <h2><%= study.title %> 지원자 관리</h2>
+  <main class="container">
+    <h2>
+      <%= study.title %> 지원자 관리
+    </h2>
 
-    <h3>합격자 명단</h3>
-    <ul>
-      <% approved.forEach(app => { %>
-        <li><%= app.name %> (<%= app.email %>)</li>
-      <% }) %>
-      <% if (approved.length === 0) { %>
-        <li>아직 없음</li>
-      <% } %>
-    </ul>
-
-    <hr>
-
-    <h3>미처리 지원자 목록</h3>
-    <ul>
-      <% pending.forEach(app => { %>
-        <li>
-          <strong><%= app.name %></strong> (<%= app.email %>)  
-          - 상태: <%= app.status || "미정" %><br>
-          기술스택: <%= app.stack %><br>
-          소개: <%= app.intro %><br>
-          지원동기: <%= app.reason %><br>
-          포트폴리오: <%= app.github %><br>
-
-          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" class="status-form" style="display:inline;">
-            <input type="hidden" name="status" value="합격">
-            <button type="submit">합격</button>
-          </form>
-          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST" class="status-form" style="display:inline;">
-            <input type="hidden" name="status" value="불합격">
-            <button type="submit">불합격</button>
-          </form>
-        </li>
-        <hr>
-      <% }) %>
-    </ul>
+    <section class="applicant-section">
+      <h3>합격자 명단</h3>
+      <ul>
+        <% approved.forEach(app=> { %>
+          <li>
+            <%= app.name %> (<%= app.email %>)
+          </li>
+          <% }) %>
+            <% if (approved.length===0) { %>
+              <li>아직 없음</li>
+              <% } %>
+      </ul>
+    </section>
 
     <hr>
-    <a href="/studyR/mypage">
-      <button style="margin-top: 20px;">마이페이지로 돌아가기</button>
-    </a>
+    <section class="applicant-section">
+      <h3>미처리 지원자 목록</h3>
+      <ul class="applicant-list">
+        <% pending.forEach(app=> { %>
+          <li>
+            <strong>
+              <%= app.name %>
+            </strong> (<%= app.email %>)
+              - 상태: <%= app.status || "미정" %><br>
+                기술스택: <%= app.stack %><br>
+                  소개: <%= app.intro %><br>
+                    지원동기: <%= app.reason %><br>
+                      포트폴리오: <%= app.github %><br>
+
+                        <div class="button-group">
+                          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST"
+                            class="status-form" style="display:inline;">
+                            <input type="hidden" name="status" value="합격">
+                            <button type="submit">합격</button>
+                          </form>
+                          <form action="/studyR/applications/<%= study.id %>/<%= app.userId %>" method="POST"
+                            class="status-form" style="display:inline;">
+                            <input type="hidden" name="status" value="불합격">
+                            <button type="submit">불합격</button>
+                          </form>
+                        </div>
+          </li>
+          <hr>
+          <% }) %>
+      </ul>
+    </section>
+
+    <hr>
+    <div class="back">
+      <a href="/studyR/mypage">
+        <button style="margin-top: 20px;">마이페이지로 돌아가기</button>
+      </a>
+    </div>
   </main>
 
   <script>
@@ -84,7 +117,5 @@
     });
   </script>
 </body>
+
 </html>
-
-
-
