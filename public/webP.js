@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mypageBtn = document.querySelector('.mypage');
     if (mypageBtn) {
         mypageBtn.addEventListener('click', function () {
-            window.location.href = '/studyR/mypage';
+            window.location.href = '/mypage';
         });
     }
 
