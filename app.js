@@ -37,7 +37,8 @@ const app = express();
 //   res.send('업로드 성공!');
 // });
 
-
+// ✅ 정적 파일 서빙 설정 (public 폴더 안의 이미지, css 등 접근 가능하게)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 뷰 엔진 설정
 app.set('views', path.join(__dirname, 'views'));
@@ -63,7 +64,14 @@ app.use('/', authRouter);
 app.use('/users', usersRouter); // 필요 시
 app.use('/studyR',studyRouter);
 app.use('/calendarR', calendarRouter);
+app.get('/mypage', (req, res) => {
+  res.render('mypage', { studies: [], ongoing: [], pending: []});
+});
+
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 // 404 처리
 app.use((req, res, next) => {
   next(createError(404));

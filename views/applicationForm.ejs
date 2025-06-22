@@ -7,14 +7,21 @@
   <link rel="stylesheet" href="/stylesheets/applicationForm.css">
 </head>
 <body>
-  <header>
-    <h1>SPARK 지원서</h1>
-    <nav>
-      <a href="/studyR/webP">MAIN</a>
-      <a href="/login">LOGOUT</a>
-    </nav>
-  </header>
-
+      <header class="header">
+        <div class="logo"> <!--파비콘 클릭하면 메인페이지로-->
+            <a href="/studyR/webP">
+                <img src="/images/favicon.png" alt="파비콘" class="favicon">
+            </a>
+            <div>
+                <h1>SPARK</h1>
+                <p>우리의 스터디 파크</p>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="/studyR/mypage">MYPAGE</a>
+            <a href="/login">LOGOUT</a>
+        </nav>
+    </header>
   <main>
     <h2>지원서 작성</h2>
     <form action="/studyR/apply/<%= studyId %>" method="POST" id="applyForm">

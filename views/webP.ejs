@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/webP.css">
+    <link rel="stylesheet" href="/stylesheets/webP.css">
     <title>SPARK - 우리의 스터디 파크</title>
     <link rel="icon" href="/images/favicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,170 +18,190 @@
 </head>
 
 <body>
-    <header class="header">
-        <div class="logo"> <!--파비콘 클릭하면 메인페이지로-->
-            <a href="/studyR/webP">
-                <img src="/images/favicon.png" alt="파비콘" class="favicon">
-            </a>
-            <div>
-                <h1>SPARK</h1>
-                <p>우리의 스터디 파크</p>
-            </div>
-        </div>
-        <nav class="nav">
-            <a href="/studyR/mypage">MYPAGE</a>
-            <a href="/login">LOGOUT</a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="carousel-section">
-            <div class="carousel-wrapper">
-                <button class="prev-btn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="carousel-images">
-                    <!-- 사용방법, 플랫폼 홍보 글 등 슬라이드 홍보 배너 형식 -->
-                    <img src="/Frame 1.png" />
-                    <img src="/Frame 2.png" />
-                    <img src="/Frame 3.png" />
+    <div class="container">
+        <header class="header">
+            <div class="logo"> <!--파비콘 클릭하면 메인페이지로-->
+                <a href="/studyR/webP">
+                    <img src="/images/favicon.png" alt="파비콘" class="favicon">
+                </a>
+                <div>
+                    <h1>SPARK</h1>
+                    <p>우리의 스터디 파크</p>
                 </div>
-                <button class="next-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
             </div>
-            <div class="carousel-text">
-                <h3>SPARK에서<br>새로운 팀원을 찾으세요!</h3>
-                <p>관심 있는 프로젝트에 참여하거나<br>자신의 아이디어를 등록해보세요.</p>
+            <nav class="nav">
+                <a href="/studyR/mypage">MYPAGE</a>
+                <a href="/login">LOGOUT</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="container">
+                <section class="carousel-section">
+                    <div class="carousel-wrapper">
+                        <button class="prev-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="carousel-images">
+                            <!-- 사용방법, 플랫폼 홍보 글 등 슬라이드 홍보 배너 형식 -->
+                            <img src="/silde1.png" />
+                            <img src="/silde2.png" />
+                            <img src="/slide3.png" />
+                        </div>
+                        <button class="next-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="carousel-text">
+                        <h3>SPARK에서<br>새로운 팀원을 찾으세요!</h3>
+                        <p>관심 있는 프로젝트에 참여하거나<br>자신의 아이디어를 등록해보세요.</p>
+                    </div>
+                </section>
+                <!-- 필터 설정 버튼 -->
+                <div class="project-header">
+                    <div class="filter-header">
+                        <h2>모집 중인 스터디 및 프로젝트</h2>
+                        <!-- 자동검색기능 -->
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
+                                <div id="autocompleteList" class="autocomplete-list"></div>
+                                <button id="searchBtn" class="filter-btn">검색</button>
+                            </div>
+                            <button id="openFilterModal" class="filter-btn">필터</button>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- 모달창 -->
+                <div id="filterModal" class="modal hidden">
+                    <div class="modal-content">
+                        <form id="filterForm" action="/studyR/filter" method="get">
+                            <h3>필터 설정</h3>
+
+                            <div class="filter-section">
+                                <label>진행 방식</label><br />
+                                <label><input type="checkbox" name="progress_method" value="온라인"> 온라인</label>
+                                <label><input type="checkbox" name="progress_method" value="오프라인"> 오프라인</label>
+                            </div>
+
+                            <div class="filter-section">
+                                <label>마감 조건</label><br />
+                                <label><input type="radio" name="deadline" value="future" checked> 마감 전</label>
+                                <label><input type="radio" name="deadline" value="past"> 마감 후</label>
+                            </div>
+
+                            <div class="filter-section">
+                                <label>기술 스택</label><br />
+                                <input type="text" name="techstack" placeholder="예: React, Node.js">
+                            </div>
+
+                            <div class="filter-actions">
+                                <button type="button" id="closeFilterModal">취소</button>
+                                <button type="submit">적용</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </section>
-        <!-- 필터 설정 버튼 -->
-        <div class="project-header">
-            <div class="filter-header">
-                <h2>모집 중인 스터디 및 프로젝트</h2>
-                <button id="openFilterModal" class="filter-btn">필터 설정</button>
-            </div>
-        </div>
-        <!-- 자동검색기능 -->
-             <input type="text" id="titleSearch" placeholder="스터디명 검색" autocomplete="off" />
-            <div id="autocompleteList" class="autocomplete-list"></div>
-            <button id="searchBtn">검색</button>
-
-        <!-- 모달창 -->
-        <div id="filterModal" class="modal hidden">
-            <div class="modal-content">
-                <form id="filterForm" action="/studyR/filter" method="get">
-                    <h3>필터 설정</h3>
-
-                    <div class="filter-section">
-                        <label>진행 방식</label><br />
-                        <label><input type="checkbox" name="progress_method" value="온라인"> 온라인</label>
-                        <label><input type="checkbox" name="progress_method" value="오프라인"> 오프라인</label>
-                    </div>
-
-                    <div class="filter-section">
-                        <label>마감 조건</label><br />
-                        <label><input type="radio" name="deadline" value="future" checked> 마감 전</label>
-                        <label><input type="radio" name="deadline" value="past"> 마감 후</label>
-                    </div>
-
-                    <div class="filter-section">
-                        <label>기술 스택</label><br />
-                        <input type="text" name="techstack" placeholder="예: React, Node.js">
-                    </div>
-
-                    <div class="filter-actions">
-                        <button type="button" id="closeFilterModal">취소</button>
-                        <button type="submit">적용</button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
 
+            <script>
+                const searchInput = document.getElementById('titleSearch');
+                const list = document.getElementById('autocompleteList');
 
+                searchInput.addEventListener('input', async () => {
+                    const query = searchInput.value.trim();
+                    if (query.length === 0) {
+                        list.innerHTML = '';
+                        return;
+                    }
 
-        <script>
-            const searchInput = document.getElementById('titleSearch');
-            const list = document.getElementById('autocompleteList');
+                    const res = await fetch(`/studyR/autocomplete?query=${encodeURIComponent(query)}`);
+                    const matches = await res.json();
 
-            searchInput.addEventListener('input', async () => {
-                const query = searchInput.value.trim();
-                if (query.length === 0) {
-                    list.innerHTML = '';
-                    return;
+                    list.innerHTML = matches.map(title =>
+                        `<div class="autocomplete-item" onclick="selectTitle('${title}')">${title}</div>`
+                    ).join('');
+                });
+
+                function selectTitle(title) {
+                    document.getElementById('titleSearch').value = title;
+                    document.getElementById('autocompleteList').innerHTML = '';
                 }
 
-                const res = await fetch(`/studyR/autocomplete?query=${encodeURIComponent(query)}`);
-                const matches = await res.json();
+                document.getElementById('searchBtn').addEventListener('click', () => {
+                    const query = document.getElementById('titleSearch').value.trim().toLowerCase();
+                    const studyCards = document.querySelectorAll('.project-card');
 
-                list.innerHTML = matches.map(title =>
-                    `<div class="autocomplete-item" onclick="selectTitle('${title}')">${title}</div>`
-                ).join('');
-            });
-
-            function selectTitle(title) {
-                document.getElementById('titleSearch').value = title;
-                document.getElementById('autocompleteList').innerHTML = '';
-            }
-
-            document.getElementById('searchBtn').addEventListener('click', () => {
-                const query = document.getElementById('titleSearch').value.trim().toLowerCase();
-                const studyCards = document.querySelectorAll('.project-card');
-
-                studyCards.forEach(card => {
-                    const title = card.querySelector('strong').innerText.toLowerCase();
-                    if (title.includes(query)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                    studyCards.forEach(card => {
+                        const title = card.querySelector('strong').innerText.toLowerCase();
+                        if (title.includes(query)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
                 });
-            });
-        </script>
+            </script>
 
 
             <!-- 화면에 안나타난 이유 라우터에서 데이터를 받을때 studies값에 아무것도 안넣음 -->
-        <div class="project-list">
-            <% if (studies.length===0) { %>
-                <p>조건에 맞는 스터디가 없습니다.</p>
-                <% } else { %>
-                    <% studies.forEach(study=> { %>
-                        <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
-                            <div class="project-card">
+            <div class="project-list">
+                <% if (studies.length===0) { %>
+                    <p>조건에 맞는 스터디가 없습니다.</p>
+                    <% } else { %>
+                        <% studies.forEach(study=> { %>
+                            <a href="/studyR/studies/<%= study.id %>" style="text-decoration: none; color: inherit;">
+                                <div class="project-card">
 
-                                <% if (study.thumbnailPath) { %>
-                                    <img src="<%= study.thumbnailPath %>" alt="썸네일"
-                                        style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;" />
-                                    <% } else { %>
-                                        <div class="thumbnail-placeholder"></div>
-                                        <% } %>
+                                    <% if (study.thumbnailPath) { %>
+                                        <div style="width: 100%; height: 200px; overflow: hidden;">
+                                        <img src="<%= study.thumbnailPath %>" alt="썸네일"
+                                            style="width: 100%; height: 100%; object-fit: fill;" />
+                                        </div>
+                                        <% } else { %>
+                                            <div class="thumbnail-placeholder"></div>
+                                            <% } %>
 
-                                            <div class="project-card-content">
-                                                <strong>
-                                                    <%= study.title %>
-                                                </strong><br />
-                                                기술:
-                                                <% try { const techs=JSON.parse(study.techstack); techs.forEach(t=>
-                                                    { %>
-                                                    <span>
-                                                        <%= t.value %>
-                                                    </span>
-                                                    <% }) } catch(e) { %>
-                                                        <%= study.techstack %>
-                                                            <% } %> |
-                                                                방식: <%= study.progress_method %> |
-                                                                    마감일: <%= study.deadline %>
-                                            </div>
-                            </div>
-                        </a>
-                        <% }) %>
-                            <% } %>
-        </div>
-        </section>
+                                                <div class="project-card-content">
+                                                    <strong>
+                                                        <%= study.title %>
+                                                    </strong>
+
+                                                    <div class="detail-line">
+                                                        <div>
+                                                            <span class="label">기술 :</span>
+                                                            <% try { const techs=JSON.parse(study.techstack);
+                                                                techs.forEach(t=> { %>
+                                                                <span>
+                                                                    <%= t.value %>
+                                                                </span>
+                                                                <% }) } catch(e) { %>
+                                                                    <%= study.techstack %>
+                                                                        <% } %>
+                                                        </div>
+                                                        <div><span class="label">방식 :</span>
+                                                            <%= study.progress_method %>
+                                                        </div>
+                                                        <div><span class="label">마감일 :</span>
+                                                            <%= study.deadline %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                </div>
+                            </a>
+                            <% }) %>
+                                <% } %>
+            </div>
+            </section>
+    </div>
     </main>
 
     <script src="/webP.js"></script>
+    </div>
 </body>
 
 </html>

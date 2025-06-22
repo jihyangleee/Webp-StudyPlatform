@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    .profile-card {
+      background-color: #e2e2e2;
+      border-radius: 15px;
+      padding: 20px;
+      width: 500px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: sans-serif;
+      margin-bottom: 15px;
+    }
+
+    .circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 1px solid gray;
+      background-color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .input-section {
+      display: none;
+      margin-bottom: 10px;
+    }
+
+    .input-section input {
+      margin-right: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  
+
+  <div class="input-section" id="inputSection">
+    <input type="text" id="inputName" placeholder="이름을 입력하세요" />
+    <input type="email" id="inputEmail" placeholder="이메일을 입력하세요" />
+    <button onclick="applyUserInfo()">적용</button>
+  </div>
+
+
+
+  <script>
+    
+
+    function applyUserInfo() {
+      const name = document.getElementById('inputName').value;
+      const email = document.getElementById('inputEmail').value;
+
+      // 유효성 검사 간단히 추가
+      if (!name || !email) {
+        alert("이름과 이메일을 모두 입력하세요.");
+        return;
+      }
+
+      document.getElementById('userName').textContent = name;
+      document.getElementById('userEmail').textContent = email;
+      document.getElementById('profileCircle').style.backgroundColor = '#6699cc';
+
+      // 입력창 숨기기
+      document.getElementById('inputSection').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>

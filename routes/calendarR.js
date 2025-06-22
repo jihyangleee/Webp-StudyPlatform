@@ -29,6 +29,7 @@ router.get('/auth/google/callback', async (req, res) => {
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens);
   req.session.tokens = tokens;
+
   res.redirect('/studyR/mypage'); // 로그인 후 리디렉션
 });
 
