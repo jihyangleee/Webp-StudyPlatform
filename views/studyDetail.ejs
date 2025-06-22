@@ -8,14 +8,32 @@
     <%= study.title %> - 스터디 상세
   </title>
   <link rel="stylesheet" href="/stylesheets/studyDetail.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
 
   <!--  Kakao Maps API (환경변수로 전달된 키 사용) -->
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=9bf612da576ee8e19a44886a389d194d"></script>
 </head>
 
 <body>
-  <div class="container">
+  <header class="header">
+    <div class="header-inner">
 
+
+      <div class="logo"> <!--파비콘 클릭하면 메인페이지로-->
+        <a href="/studyR/webP">
+          <img src="/favicon.png" alt="파비콘" class="favicon">
+        </a>
+        <div>
+          <h1>SPARK</h1>
+          <p>우리의 스터디 파크</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="/mypage">MYPAGE</a>
+        <a href="/login">LOGOUT</a>
+      </nav>
+  </header>
+  <div class="container">
     <div class="content">
       <div class="form-wrapper">
         <h2>
@@ -27,7 +45,7 @@
           <%- study.descriptionHtml %>
         </div>
 
-        <div class="info-label">기술 스택:</div>
+        <div class="info-label">기술 스택</div>
         <div class="info-value">
           <% let stack='' ; try { if (typeof study.techstack==='string' ) { stack=JSON.parse(study.techstack).map(t=>
             t.value).join(', ');
@@ -60,7 +78,7 @@
         </div>
 
         <% if (study.location_lat && study.location_lng) { %>
-          <div class="info-label">모임 장소</div>
+          <div class="info-label" id="map-title">📍모임 장소</div>
           <div id="map" style="width: 100%; height: 350px; margin-top: 1rem;"></div>
           <% } %>
 
